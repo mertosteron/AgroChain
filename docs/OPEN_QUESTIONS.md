@@ -1,13 +1,13 @@
 # AgroChain — evidence, assumptions and open questions
 
-Status: Stage 1, 2026-09-16. Defaults below make the pilot implementable without claiming team approval or external evidence. Team answers may require a documented contract change; no question here blocks writing Stage 1.
+Status: Stage 1 assumptions, 2026-09-16, with Stage 2 topology revision on 2026-09-17. The repository facts below describe the historical Stage 1 inspection; current network evidence is in [STAGE2_REPORT.md](STAGE2_REPORT.md). Team answers may require a documented contract change.
 
-## Verified repository facts
+## Historical Stage 1 repository facts
 
 - A complete recursive inspection of `/home/mert/Projects/AgroChain`, including hidden entries, found only `AGENTS.md` before this work.
 - No supplied presentation, README, previous architecture, code, test suite, API-access proof, measured performance results or Git metadata existed in that directory.
 - `AGENTS.md` requires eight sequential stages, Spring Boot, deterministic Fabric chaincode, commercial privacy, institutional simulators and explainable anomaly detection.
-- The current task explicitly adds HKS, a consumer trace and three scenarios, and prohibits beginning Stage 2.
+- The Stage 1 task explicitly added HKS, a consumer trace and three scenarios, and prohibited beginning Stage 2 at that time. The subsequent Stage 2 request authorizes only network provisioning and verification.
 - Technical references support Fabric PDCs, Raft ordering and client-originated proposal timestamps; they do not prove this project implements them.
 
 ## Adopted assumptions, not verified facts
@@ -19,10 +19,10 @@ Status: Stage 1, 2026-09-16. Defaults below make the pilot implementable without
 | A3 | Logistics has custody only; retailer acquires ownership on acknowledged receipt | Purchase invoice represents agreed terms before delivery, not proof of payment or legal transfer. |
 | A4 | One whole-batch bulk lot → one retail lot; no quantity loss or splitting | Demo is tractable; real trade discrepancies block workflow and need a future model. |
 | A5 | TRY/kg, tax-exclusive comparable rates, no discounts; freight contextual | Score is a price-increase review signal, not net margin or legally excessive profit. |
-| A6 | One-host demo, four peers, one-node Raft; retailer and regulator endorse all writes | Simple and reproducible but no HA, infrastructure independence or availability against withholding endorsements. |
+| A6 | One-host demo, four peers, three-node Raft in separate OrdererMSP, agrochannel; retailer and regulator endorse future business writes | Stage 2 request supersedes the single-orderer default. Crash fault tolerance for one ordering node, no host HA, Byzantine protection or independent ordering operators. |
 | A7 | 50% strict-greater threshold; immutable `price-increase-v1` policy | 50% itself is no signal; changing meaning requires a new configuration version. |
 | A8 | Source keys configured at bootstrap, no live rotation; synthetic data retained until explicit reset | Local key compromise/reset and real retention policies remain operational design work. |
-| A9 | Baseline Linux x86-64, 16 GB RAM, 20 GB free disk; Go chaincode and Java backend | Must be verified with pinned versions in Stage 2; not a measured resource minimum. |
+| A9 | Baseline Linux x86-64, 16 GB RAM, 20 GB free disk; Go chaincode and Java backend in future stages | Stage 2 pins Fabric 2.5.15 and verifies the network on local Arch Linux; hardware baseline is not a measured minimum. |
 | A10 | “Gıda-TL” is only a possible historical proposal label | No evidence supports treating it as a component; all deliverables use AgroChain. |
 
 ## Questions genuinely requiring team input
