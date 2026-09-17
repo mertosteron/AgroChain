@@ -1,14 +1,14 @@
 # AgroChain — architecture contract
 
-Status: Stage 1, version 1.0. This describes planned behavior. [Product scope](PRODUCT_SCOPE.md) fixes the use case; [data contracts](DATA_CONTRACTS.md), [security](SECURITY_AND_PRIVACY.md) and [state machines](STATE_MACHINE.md) are normative companions.
+Status: Stage 1 domain contract with the explicitly requested Stage 2 network revision. Domain behavior remains planned. [Product scope](PRODUCT_SCOPE.md) fixes the use case; [data contracts](DATA_CONTRACTS.md), [security](SECURITY_AND_PRIVACY.md) and [state machines](STATE_MACHINE.md) are normative companions.
 
 ## Minimal deployment
 
-One local Docker Compose project: four peers (`ProducerMSP`, `LogisticsMSP`, `RetailerMSP`, `RegulatorMSP`), one `agrochain` channel, one Go chaincode package, and one single-node Raft orderer under a separate `OrdererMSP`. One Raft node is an intentional non-HA demo configuration. Multiple organization identities on one host do not demonstrate independent infrastructure or resistance to host compromise. Three orderers and independent hosts are optional future resilience work.
+One local Docker Compose project: four peers (`ProducerMSP`, `LogisticsMSP`, `RetailerMSP`, `RegulatorMSP`), one `agrochannel` channel, and three Raft orderers under a separate `OrdererMSP`. The Stage 2 request supersedes the original `agrochain` channel name and single-orderer assumption. One anchor peer represents each application organization. Three orderers tolerate one crashed node while quorum remains; Raft is not Byzantine fault tolerant. One host/operator still controls all ordering nodes, so organization identities do not demonstrate independent infrastructure or resistance to host compromise. A Go business chaincode package is deferred to Stage 3; Stage 2 installs no chaincode.
 
 Use Fabric's embedded LevelDB for world state, key-based lookups and explicit append-only domain receipts. CouchDB is unnecessary. Java/Spring Boot uses the supported Fabric Gateway Java client. A simple browser UI is delivered in Stage 6; select its small framework at that stage. A local SQLite application database holds operation tracking, read projections and document metadata, with controlled filesystem storage for synthetic attachments. It is neither consensus state nor a substitute for PDC authorization.
 
-Stage 2 must pin exact compatible Fabric images/binaries, CA tooling, Go dependencies, Java/JDK, Gateway and build-tool versions plus artifact checksums. No dependency lock or supported-machine claim exists yet. Working baseline assumption: Linux x86-64, Docker Compose v2, 16 GB RAM and 20 GB free space; validate it, do not advertise it as measured minimum hardware.
+Stage 2 pins Fabric 2.5.15 images/binaries and the official Linux amd64 CLI archive checksum in `network/.env.example`. Development MSP and TLS identities use cryptogen; certificate lifecycle/revocation management requires Fabric CA or institutional PKI outside this stage. Cryptogen does not issue the `agrochain.role` business attributes: later role-bearing identities must satisfy the unchanged security contract. Go dependencies, Java/JDK and Gateway versions are deferred to the stages that introduce them. The [network guide](../network/README.md) defines Linux x86-64, Docker Engine >=24 and Compose >=2.20 prerequisites. A 16 GB RAM / 20 GB free-space baseline remains an assumption, not a measured minimum.
 
 ```mermaid
 flowchart TD
@@ -68,7 +68,7 @@ All four return `sourceMode=SIMULATED` and distinct allowlisted issuer/key ident
 5. The backend returns committed success only after a `VALID` commit. It then promotes staged attachment metadata. A timeout with unknown commit outcome returns pending, retains the operation ID and reconciles against its receipt; it must not create a fresh operation and blindly retry.
 6. An event consumer records its block/transaction checkpoint and deduplicates by transaction ID. On crash it replays valid events. A separate reconciliation pass repairs committed-but-unprojected records and committed-but-staged files. Unsubmitted staged files can be expired; files associated with unresolved submissions cannot be discarded automatically.
 
-The Gateway may receive a proposal signed by another organization's client; Stage 2/4 tests must verify channel ACLs and explicit endorser targeting for this deployment. Never route freight plaintext through a Producer peer, or audit plaintext through Producer/Logistics peers. Private reads target a member peer and enforce both MSP and client role. Fabric's transient-data routing considerations are documented in [Fabric Gateway](https://hyperledger-fabric.readthedocs.io/en/latest/gateway.html).
+The Gateway may receive a proposal signed by another organization's client; Stage 2 verifies admin/client channel queries, while Stage 4/5 must verify private-proposal ACLs and explicit endorser targeting for this deployment. Never route freight plaintext through a Producer peer, or audit plaintext through Producer/Logistics peers. Private reads target a member peer and enforce both MSP and client role. Fabric's transient-data routing considerations are documented in [Fabric Gateway](https://hyperledger-fabric.readthedocs.io/en/latest/gateway.html).
 
 ## Determinism and time
 
@@ -80,7 +80,7 @@ Use `GetTxTimestamp()` as the consistent transaction attribute and persist the f
 
 ## Consensus, events and optional components
 
-Raft orders endorsed transactions; peers validate endorsement and version conflicts before applying them. A submitted or ordered transaction may still be invalid. The pilot's choice and its single-node limitation follow the [Fabric ordering model](https://hyperledger-fabric.readthedocs.io/en/latest/orderer/ordering_service.html).
+Raft orders endorsed transactions; peers validate endorsement and version conflicts before applying them. A submitted or ordered transaction may still be invalid. The three-node pilot uses crash fault tolerance, not Byzantine fault tolerance, and retains a shared-host failure boundary; see the [Fabric ordering model](https://hyperledger-fabric.readthedocs.io/en/latest/orderer/ordering_service.html).
 
 Kafka, if ever needed, would ingest application events after commit. It is not the selected Fabric consensus mechanism. A resumable Gateway event consumer and SQLite checkpoint are sufficient for this pilot. Redis caching/queues are also deferred until a measured need exists; neither becomes a source of consensus data.
 
