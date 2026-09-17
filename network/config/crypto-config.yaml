@@ -1,0 +1,32 @@
+OrdererOrgs:
+  - Name: Orderer
+    Domain: orderer.agrochain.test
+    EnableNodeOUs: true
+    Specs:
+      - Hostname: orderer1
+        SANS: [localhost, 127.0.0.1]
+      - Hostname: orderer2
+        SANS: [localhost, 127.0.0.1]
+      - Hostname: orderer3
+        SANS: [localhost, 127.0.0.1]
+PeerOrgs:
+  - Name: Producer
+    Domain: producer.agrochain.test
+    EnableNodeOUs: true
+    Template: {Count: 1, SANS: [localhost, 127.0.0.1]}
+    Users: {Count: 1}
+  - Name: Logistics
+    Domain: logistics.agrochain.test
+    EnableNodeOUs: true
+    Template: {Count: 1, SANS: [localhost, 127.0.0.1]}
+    Users: {Count: 1}
+  - Name: Retailer
+    Domain: retailer.agrochain.test
+    EnableNodeOUs: true
+    Template: {Count: 1, SANS: [localhost, 127.0.0.1]}
+    Users: {Count: 1}
+  - Name: Regulator
+    Domain: regulator.agrochain.test
+    EnableNodeOUs: true
+    Template: {Count: 1, SANS: [localhost, 127.0.0.1]}
+    Users: {Count: 1}
