@@ -1,0 +1,32 @@
+[
+  {
+    "name": "tradePrivate",
+    "policy": "OR('ProducerMSP.member','RetailerMSP.member','RegulatorMSP.member')",
+    "requiredPeerCount": 1,
+    "maxPeerCount": 2,
+    "blockToLive": 0,
+    "memberOnlyRead": true,
+    "memberOnlyWrite": true,
+    "endorsementPolicy": {"signaturePolicy": "AND('RetailerMSP.peer','RegulatorMSP.peer')"}
+  },
+  {
+    "name": "freightPrivate",
+    "policy": "OR('LogisticsMSP.member','RetailerMSP.member','RegulatorMSP.member')",
+    "requiredPeerCount": 1,
+    "maxPeerCount": 2,
+    "blockToLive": 0,
+    "memberOnlyRead": true,
+    "memberOnlyWrite": true,
+    "endorsementPolicy": {"signaturePolicy": "AND('RetailerMSP.peer','RegulatorMSP.peer')"}
+  },
+  {
+    "name": "retailAuditPrivate",
+    "policy": "OR('RetailerMSP.member','RegulatorMSP.member')",
+    "requiredPeerCount": 1,
+    "maxPeerCount": 1,
+    "blockToLive": 0,
+    "memberOnlyRead": true,
+    "memberOnlyWrite": true,
+    "endorsementPolicy": {"signaturePolicy": "AND('RetailerMSP.peer','RegulatorMSP.peer')"}
+  }
+]
