@@ -1,0 +1,224 @@
+# Local development network. Published endpoints bind only to loopback.
+name: agrochain
+# Empty environment variables do not override this Fabric YAML default. Derive
+# only the unused Docker endpoint from the pinned image's own configuration.
+x-peer-command: &peer-command
+  - bash
+  - -ec
+  - >-
+    sed 's#^    endpoint: unix:///var/run/docker.sock$#    endpoint: ""#'
+    /etc/hyperledger/fabric/core.yaml > /tmp/core.yaml;
+    export FABRIC_CFG_PATH=/tmp;
+    exec peer node start
+x-health: &health
+  test: ["CMD", "bash", "-ec", "exec 3<>/dev/tcp/127.0.0.1/9443; printf 'GET /healthz HTTP/1.0\\r\\n\\r\\n' >&3; IFS= read -r status <&3; [[ \"$$status\" == *\" 200 \"* ]]"]
+  interval: 3s
+  timeout: 2s
+  retries: 40
+  start_period: 5s
+
+x-orderer-env: &orderer-env
+  FABRIC_LOGGING_SPEC: INFO
+  ORDERER_GENERAL_LISTENADDRESS: 0.0.0.0
+  ORDERER_GENERAL_LISTENPORT: 7050
+  ORDERER_GENERAL_LOCALMSPID: OrdererMSP
+  ORDERER_GENERAL_LOCALMSPDIR: /var/hyperledger/orderer/msp
+  ORDERER_GENERAL_BOOTSTRAPMETHOD: none
+  ORDERER_GENERAL_TLS_ENABLED: "true"
+  ORDERER_GENERAL_TLS_PRIVATEKEY: /var/hyperledger/orderer/tls/server.key
+  ORDERER_GENERAL_TLS_CERTIFICATE: /var/hyperledger/orderer/tls/server.crt
+  ORDERER_GENERAL_TLS_ROOTCAS: "[/var/hyperledger/orderer/tls/ca.crt]"
+  ORDERER_GENERAL_CLUSTER_CLIENTCERTIFICATE: /var/hyperledger/orderer/tls/server.crt
+  ORDERER_GENERAL_CLUSTER_CLIENTPRIVATEKEY: /var/hyperledger/orderer/tls/server.key
+  ORDERER_GENERAL_CLUSTER_ROOTCAS: "[/var/hyperledger/orderer/tls/ca.crt]"
+  ORDERER_CHANNELPARTICIPATION_ENABLED: "true"
+  ORDERER_ADMIN_LISTENADDRESS: 0.0.0.0:7053
+  ORDERER_ADMIN_TLS_ENABLED: "true"
+  ORDERER_ADMIN_TLS_CLIENTAUTHREQUIRED: "true"
+  ORDERER_ADMIN_TLS_PRIVATEKEY: /var/hyperledger/orderer/tls/server.key
+  ORDERER_ADMIN_TLS_CERTIFICATE: /var/hyperledger/orderer/tls/server.crt
+  ORDERER_ADMIN_TLS_CLIENTROOTCAS: "[/var/hyperledger/orderer/tls/ca.crt]"
+  ORDERER_OPERATIONS_LISTENADDRESS: 127.0.0.1:9443
+  ORDERER_FILELEDGER_LOCATION: /var/hyperledger/production/orderer
+
+x-peer-env: &peer-env
+  FABRIC_LOGGING_SPEC: INFO
+  CORE_PEER_LISTENADDRESS: 0.0.0.0:7051
+  CORE_PEER_CHAINCODELISTENADDRESS: 0.0.0.0:7052
+  CORE_PEER_MSPCONFIGPATH: /etc/hyperledger/fabric/msp
+  CORE_PEER_TLS_ENABLED: "true"
+  CORE_PEER_TLS_CERT_FILE: /etc/hyperledger/fabric/tls/server.crt
+  CORE_PEER_TLS_KEY_FILE: /etc/hyperledger/fabric/tls/server.key
+  CORE_PEER_TLS_ROOTCERT_FILE: /etc/hyperledger/fabric/tls/ca.crt
+  CORE_PEER_GOSSIP_USELEADERELECTION: "false"
+  CORE_PEER_GOSSIP_ORGLEADER: "true"
+  CORE_PEER_GOSSIP_STATE_ENABLED: "false"
+  CORE_PEER_DELIVERYCLIENT_BLOCKGOSSIPENABLED: "false"
+  CORE_PEER_GATEWAY_ENABLED: "true"
+  # The pinned image includes ccaas_builder; no host Docker socket is exposed.
+  # Chaincode packaging/launch configuration belongs to Stage 3.
+  CORE_LEDGER_STATE_STATEDATABASE: goleveldb
+  CORE_OPERATIONS_LISTENADDRESS: 127.0.0.1:9443
+
+services:
+  orderer1:
+    image: hyperledger/fabric-orderer:${FABRIC_VERSION:?Use network/.env.example}
+    container_name: agrochain-orderer1
+    hostname: orderer1.orderer.agrochain.test
+    environment: *orderer-env
+    command: orderer
+    ports: ["127.0.0.1:7050:7050", "127.0.0.1:7053:7053"]
+    volumes:
+      - ../organizations/ordererOrganizations/orderer.agrochain.test/orderers/orderer1.orderer.agrochain.test/msp:/var/hyperledger/orderer/msp:ro
+      - ../organizations/ordererOrganizations/orderer.agrochain.test/orderers/orderer1.orderer.agrochain.test/tls:/var/hyperledger/orderer/tls:ro
+      - orderer1-data:/var/hyperledger/production/orderer
+    networks:
+      fabric:
+        aliases: [orderer1.orderer.agrochain.test]
+    healthcheck: *health
+    stop_grace_period: 15s
+  orderer2:
+    image: hyperledger/fabric-orderer:${FABRIC_VERSION:?Use network/.env.example}
+    container_name: agrochain-orderer2
+    hostname: orderer2.orderer.agrochain.test
+    environment: *orderer-env
+    command: orderer
+    ports: ["127.0.0.1:8050:7050", "127.0.0.1:8053:7053"]
+    volumes:
+      - ../organizations/ordererOrganizations/orderer.agrochain.test/orderers/orderer2.orderer.agrochain.test/msp:/var/hyperledger/orderer/msp:ro
+      - ../organizations/ordererOrganizations/orderer.agrochain.test/orderers/orderer2.orderer.agrochain.test/tls:/var/hyperledger/orderer/tls:ro
+      - orderer2-data:/var/hyperledger/production/orderer
+    networks:
+      fabric:
+        aliases: [orderer2.orderer.agrochain.test]
+    healthcheck: *health
+    stop_grace_period: 15s
+  orderer3:
+    image: hyperledger/fabric-orderer:${FABRIC_VERSION:?Use network/.env.example}
+    container_name: agrochain-orderer3
+    hostname: orderer3.orderer.agrochain.test
+    environment: *orderer-env
+    command: orderer
+    ports: ["127.0.0.1:9050:7050", "127.0.0.1:9053:7053"]
+    volumes:
+      - ../organizations/ordererOrganizations/orderer.agrochain.test/orderers/orderer3.orderer.agrochain.test/msp:/var/hyperledger/orderer/msp:ro
+      - ../organizations/ordererOrganizations/orderer.agrochain.test/orderers/orderer3.orderer.agrochain.test/tls:/var/hyperledger/orderer/tls:ro
+      - orderer3-data:/var/hyperledger/production/orderer
+    networks:
+      fabric:
+        aliases: [orderer3.orderer.agrochain.test]
+    healthcheck: *health
+    stop_grace_period: 15s
+  producer:
+    image: hyperledger/fabric-peer:${FABRIC_VERSION:?Use network/.env.example}
+    container_name: agrochain-producer
+    hostname: peer0.producer.agrochain.test
+    environment:
+      <<: *peer-env
+      CORE_PEER_ID: peer0.producer.agrochain.test
+      CORE_PEER_ADDRESS: peer0.producer.agrochain.test:7051
+      CORE_PEER_LOCALMSPID: ProducerMSP
+      CORE_PEER_GOSSIP_EXTERNALENDPOINT: peer0.producer.agrochain.test:7051
+      CORE_PEER_GOSSIP_BOOTSTRAP: peer0.producer.agrochain.test:7051
+      CORE_PEER_CHAINCODEADDRESS: peer0.producer.agrochain.test:7052
+    command: *peer-command
+    ports: ["127.0.0.1:7051:7051"]
+    volumes:
+      - ../organizations/peerOrganizations/producer.agrochain.test/peers/peer0.producer.agrochain.test/msp:/etc/hyperledger/fabric/msp:ro
+      - ../organizations/peerOrganizations/producer.agrochain.test/peers/peer0.producer.agrochain.test/tls:/etc/hyperledger/fabric/tls:ro
+      - producer-data:/var/hyperledger/production
+    networks:
+      fabric:
+        aliases: [peer0.producer.agrochain.test]
+    healthcheck: *health
+    stop_grace_period: 15s
+  logistics:
+    image: hyperledger/fabric-peer:${FABRIC_VERSION:?Use network/.env.example}
+    container_name: agrochain-logistics
+    hostname: peer0.logistics.agrochain.test
+    environment:
+      <<: *peer-env
+      CORE_PEER_ID: peer0.logistics.agrochain.test
+      CORE_PEER_ADDRESS: peer0.logistics.agrochain.test:7051
+      CORE_PEER_LOCALMSPID: LogisticsMSP
+      CORE_PEER_GOSSIP_EXTERNALENDPOINT: peer0.logistics.agrochain.test:7051
+      CORE_PEER_GOSSIP_BOOTSTRAP: peer0.logistics.agrochain.test:7051
+      CORE_PEER_CHAINCODEADDRESS: peer0.logistics.agrochain.test:7052
+    command: *peer-command
+    ports: ["127.0.0.1:8051:7051"]
+    volumes:
+      - ../organizations/peerOrganizations/logistics.agrochain.test/peers/peer0.logistics.agrochain.test/msp:/etc/hyperledger/fabric/msp:ro
+      - ../organizations/peerOrganizations/logistics.agrochain.test/peers/peer0.logistics.agrochain.test/tls:/etc/hyperledger/fabric/tls:ro
+      - logistics-data:/var/hyperledger/production
+    networks:
+      fabric:
+        aliases: [peer0.logistics.agrochain.test]
+    healthcheck: *health
+    stop_grace_period: 15s
+  retailer:
+    image: hyperledger/fabric-peer:${FABRIC_VERSION:?Use network/.env.example}
+    container_name: agrochain-retailer
+    hostname: peer0.retailer.agrochain.test
+    environment:
+      <<: *peer-env
+      CORE_PEER_ID: peer0.retailer.agrochain.test
+      CORE_PEER_ADDRESS: peer0.retailer.agrochain.test:7051
+      CORE_PEER_LOCALMSPID: RetailerMSP
+      CORE_PEER_GOSSIP_EXTERNALENDPOINT: peer0.retailer.agrochain.test:7051
+      CORE_PEER_GOSSIP_BOOTSTRAP: peer0.retailer.agrochain.test:7051
+      CORE_PEER_CHAINCODEADDRESS: peer0.retailer.agrochain.test:7052
+    command: *peer-command
+    ports: ["127.0.0.1:9051:7051"]
+    volumes:
+      - ../organizations/peerOrganizations/retailer.agrochain.test/peers/peer0.retailer.agrochain.test/msp:/etc/hyperledger/fabric/msp:ro
+      - ../organizations/peerOrganizations/retailer.agrochain.test/peers/peer0.retailer.agrochain.test/tls:/etc/hyperledger/fabric/tls:ro
+      - retailer-data:/var/hyperledger/production
+    networks:
+      fabric:
+        aliases: [peer0.retailer.agrochain.test]
+    healthcheck: *health
+    stop_grace_period: 15s
+  regulator:
+    image: hyperledger/fabric-peer:${FABRIC_VERSION:?Use network/.env.example}
+    container_name: agrochain-regulator
+    hostname: peer0.regulator.agrochain.test
+    environment:
+      <<: *peer-env
+      CORE_PEER_ID: peer0.regulator.agrochain.test
+      CORE_PEER_ADDRESS: peer0.regulator.agrochain.test:7051
+      CORE_PEER_LOCALMSPID: RegulatorMSP
+      CORE_PEER_GOSSIP_EXTERNALENDPOINT: peer0.regulator.agrochain.test:7051
+      CORE_PEER_GOSSIP_BOOTSTRAP: peer0.regulator.agrochain.test:7051
+      CORE_PEER_CHAINCODEADDRESS: peer0.regulator.agrochain.test:7052
+    command: *peer-command
+    ports: ["127.0.0.1:10051:7051"]
+    volumes:
+      - ../organizations/peerOrganizations/regulator.agrochain.test/peers/peer0.regulator.agrochain.test/msp:/etc/hyperledger/fabric/msp:ro
+      - ../organizations/peerOrganizations/regulator.agrochain.test/peers/peer0.regulator.agrochain.test/tls:/etc/hyperledger/fabric/tls:ro
+      - regulator-data:/var/hyperledger/production
+    networks:
+      fabric:
+        aliases: [peer0.regulator.agrochain.test]
+    healthcheck: *health
+    stop_grace_period: 15s
+
+networks:
+  fabric:
+    name: agrochain-fabric
+    driver: bridge
+
+volumes:
+  orderer1-data:
+    name: agrochain-orderer1-data
+  orderer2-data:
+    name: agrochain-orderer2-data
+  orderer3-data:
+    name: agrochain-orderer3-data
+  producer-data:
+    name: agrochain-producer-data
+  logistics-data:
+    name: agrochain-logistics-data
+  retailer-data:
+    name: agrochain-retailer-data
+  regulator-data:
+    name: agrochain-regulator-data
