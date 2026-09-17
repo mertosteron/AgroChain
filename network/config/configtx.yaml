@@ -1,0 +1,106 @@
+Organizations:
+  - &Orderer
+    Name: OrdererMSP
+    ID: OrdererMSP
+    MSPDir: ../organizations/ordererOrganizations/orderer.agrochain.test/msp
+    Policies:
+      Readers: {Type: Signature, Rule: "OR('OrdererMSP.member')"}
+      Writers: {Type: Signature, Rule: "OR('OrdererMSP.member')"}
+      Admins: {Type: Signature, Rule: "OR('OrdererMSP.admin')"}
+    OrdererEndpoints:
+      - orderer1.orderer.agrochain.test:7050
+      - orderer2.orderer.agrochain.test:7050
+      - orderer3.orderer.agrochain.test:7050
+  - &Producer
+    Name: ProducerMSP
+    ID: ProducerMSP
+    MSPDir: ../organizations/peerOrganizations/producer.agrochain.test/msp
+    Policies:
+      Readers: {Type: Signature, Rule: "OR('ProducerMSP.admin','ProducerMSP.peer','ProducerMSP.client')"}
+      Writers: {Type: Signature, Rule: "OR('ProducerMSP.admin','ProducerMSP.client')"}
+      Admins: {Type: Signature, Rule: "OR('ProducerMSP.admin')"}
+      Endorsement: {Type: Signature, Rule: "OR('ProducerMSP.peer')"}
+    AnchorPeers: [{Host: peer0.producer.agrochain.test, Port: 7051}]
+  - &Logistics
+    Name: LogisticsMSP
+    ID: LogisticsMSP
+    MSPDir: ../organizations/peerOrganizations/logistics.agrochain.test/msp
+    Policies:
+      Readers: {Type: Signature, Rule: "OR('LogisticsMSP.admin','LogisticsMSP.peer','LogisticsMSP.client')"}
+      Writers: {Type: Signature, Rule: "OR('LogisticsMSP.admin','LogisticsMSP.client')"}
+      Admins: {Type: Signature, Rule: "OR('LogisticsMSP.admin')"}
+      Endorsement: {Type: Signature, Rule: "OR('LogisticsMSP.peer')"}
+    AnchorPeers: [{Host: peer0.logistics.agrochain.test, Port: 7051}]
+  - &Retailer
+    Name: RetailerMSP
+    ID: RetailerMSP
+    MSPDir: ../organizations/peerOrganizations/retailer.agrochain.test/msp
+    Policies:
+      Readers: {Type: Signature, Rule: "OR('RetailerMSP.admin','RetailerMSP.peer','RetailerMSP.client')"}
+      Writers: {Type: Signature, Rule: "OR('RetailerMSP.admin','RetailerMSP.client')"}
+      Admins: {Type: Signature, Rule: "OR('RetailerMSP.admin')"}
+      Endorsement: {Type: Signature, Rule: "OR('RetailerMSP.peer')"}
+    AnchorPeers: [{Host: peer0.retailer.agrochain.test, Port: 7051}]
+  - &Regulator
+    Name: RegulatorMSP
+    ID: RegulatorMSP
+    MSPDir: ../organizations/peerOrganizations/regulator.agrochain.test/msp
+    Policies:
+      Readers: {Type: Signature, Rule: "OR('RegulatorMSP.admin','RegulatorMSP.peer','RegulatorMSP.client')"}
+      Writers: {Type: Signature, Rule: "OR('RegulatorMSP.admin','RegulatorMSP.client')"}
+      Admins: {Type: Signature, Rule: "OR('RegulatorMSP.admin')"}
+      Endorsement: {Type: Signature, Rule: "OR('RegulatorMSP.peer')"}
+    AnchorPeers: [{Host: peer0.regulator.agrochain.test, Port: 7051}]
+
+Application: &Application
+  Organizations: []
+  Policies:
+    Readers: {Type: ImplicitMeta, Rule: ANY Readers}
+    Writers: {Type: ImplicitMeta, Rule: ANY Writers}
+    Admins: {Type: ImplicitMeta, Rule: MAJORITY Admins}
+    LifecycleEndorsement: {Type: ImplicitMeta, Rule: MAJORITY Endorsement}
+    Endorsement: {Type: Signature, Rule: "AND('RetailerMSP.peer','RegulatorMSP.peer')"}
+  Capabilities: {V2_5: true}
+
+Orderer: &OrdererDefaults
+  OrdererType: etcdraft
+  EtcdRaft:
+    Consenters:
+      - Host: orderer1.orderer.agrochain.test
+        Port: 7050
+        ClientTLSCert: ../organizations/ordererOrganizations/orderer.agrochain.test/orderers/orderer1.orderer.agrochain.test/tls/server.crt
+        ServerTLSCert: ../organizations/ordererOrganizations/orderer.agrochain.test/orderers/orderer1.orderer.agrochain.test/tls/server.crt
+      - Host: orderer2.orderer.agrochain.test
+        Port: 7050
+        ClientTLSCert: ../organizations/ordererOrganizations/orderer.agrochain.test/orderers/orderer2.orderer.agrochain.test/tls/server.crt
+        ServerTLSCert: ../organizations/ordererOrganizations/orderer.agrochain.test/orderers/orderer2.orderer.agrochain.test/tls/server.crt
+      - Host: orderer3.orderer.agrochain.test
+        Port: 7050
+        ClientTLSCert: ../organizations/ordererOrganizations/orderer.agrochain.test/orderers/orderer3.orderer.agrochain.test/tls/server.crt
+        ServerTLSCert: ../organizations/ordererOrganizations/orderer.agrochain.test/orderers/orderer3.orderer.agrochain.test/tls/server.crt
+  BatchTimeout: 2s
+  BatchSize: {MaxMessageCount: 10, AbsoluteMaxBytes: 99 MB, PreferredMaxBytes: 512 KB}
+  Organizations: []
+  Policies:
+    Readers: {Type: ImplicitMeta, Rule: ANY Readers}
+    Writers: {Type: ImplicitMeta, Rule: ANY Writers}
+    Admins: {Type: ImplicitMeta, Rule: MAJORITY Admins}
+    BlockValidation: {Type: ImplicitMeta, Rule: ANY Writers}
+  Capabilities: {V2_0: true}
+
+Channel: &Channel
+  Policies:
+    Readers: {Type: ImplicitMeta, Rule: ANY Readers}
+    Writers: {Type: ImplicitMeta, Rule: ANY Writers}
+    Admins: {Type: ImplicitMeta, Rule: MAJORITY Admins}
+  Capabilities: {V2_0: true}
+
+Profiles:
+  AgroChannel:
+    <<: *Channel
+    Orderer:
+      <<: *OrdererDefaults
+      Organizations: [*Orderer]
+    Application:
+      <<: *Application
+      Organizations: [*Producer, *Logistics, *Retailer, *Regulator]
