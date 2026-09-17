@@ -1,0 +1,41 @@
+name: Stage 2 Fabric network
+on:
+  pull_request:
+    paths: ['network/**', 'Makefile', '.github/workflows/stage2-network.yml']
+  push:
+    paths: ['network/**', 'Makefile', '.github/workflows/stage2-network.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  network:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - name: Install checksum-pinned CLI locally
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          source network/.env.example
+          mkdir -p network/tools
+          curl --fail --location --retry 3 --proto '=https' --tlsv1.2 \
+            "https://github.com/hyperledger/fabric/releases/download/v${FABRIC_VERSION}/hyperledger-fabric-linux-amd64-${FABRIC_VERSION}.tar.gz" \
+            --output network/tools/fabric.tar.gz
+          printf '%s  %s\n' "$FABRIC_LINUX_AMD64_SHA256" network/tools/fabric.tar.gz | sha256sum --check
+          tar -xzf network/tools/fabric.tar.gz -C network/tools
+      - name: Configuration and safety tests
+        run: make test
+      - name: Two bootstraps, TLS, channel and peer restart verification
+        run: make smoke
+      - name: Fresh identity and ledger reset
+        run: |
+          make network-down
+          make clean-generated
+          make bootstrap
+          make verify
+      - name: Stop and remove only demo artifacts
+        if: always()
+        run: |
+          make network-down
+          make clean-generated
