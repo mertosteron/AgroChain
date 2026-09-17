@@ -1,0 +1,13 @@
+{
+  "name": "agrochain-${ORG}",
+  "version": "1.0.0",
+  "client": {"organization": "${MSP}"},
+  "organizations": {"${MSP}": {"mspid": "${MSP}", "peers": ["peer0.${ORG}.agrochain.test"]}},
+  "channels": {"agrochannel": {"orderers": ["orderer1.orderer.agrochain.test", "orderer2.orderer.agrochain.test", "orderer3.orderer.agrochain.test"], "peers": {"peer0.${ORG}.agrochain.test": {"endorsingPeer": true, "chaincodeQuery": true, "ledgerQuery": true, "eventSource": true}}}},
+  "peers": {"peer0.${ORG}.agrochain.test": {"url": "grpcs://localhost:${PEER_PORT}", "tlsCACerts": {"path": "../../organizations/peerOrganizations/${ORG}.agrochain.test/peers/peer0.${ORG}.agrochain.test/tls/ca.crt"}, "grpcOptions": {"ssl-target-name-override": "peer0.${ORG}.agrochain.test", "hostnameOverride": "peer0.${ORG}.agrochain.test"}}},
+  "orderers": {
+    "orderer1.orderer.agrochain.test": {"url": "grpcs://localhost:7050", "tlsCACerts": {"path": "../../organizations/ordererOrganizations/orderer.agrochain.test/orderers/orderer1.orderer.agrochain.test/tls/ca.crt"}, "grpcOptions": {"ssl-target-name-override": "orderer1.orderer.agrochain.test", "hostnameOverride": "orderer1.orderer.agrochain.test"}},
+    "orderer2.orderer.agrochain.test": {"url": "grpcs://localhost:8050", "tlsCACerts": {"path": "../../organizations/ordererOrganizations/orderer.agrochain.test/orderers/orderer2.orderer.agrochain.test/tls/ca.crt"}, "grpcOptions": {"ssl-target-name-override": "orderer2.orderer.agrochain.test", "hostnameOverride": "orderer2.orderer.agrochain.test"}},
+    "orderer3.orderer.agrochain.test": {"url": "grpcs://localhost:9050", "tlsCACerts": {"path": "../../organizations/ordererOrganizations/orderer.agrochain.test/orderers/orderer3.orderer.agrochain.test/tls/ca.crt"}, "grpcOptions": {"ssl-target-name-override": "orderer3.orderer.agrochain.test", "hostnameOverride": "orderer3.orderer.agrochain.test"}}
+  }
+}
