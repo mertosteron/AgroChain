@@ -1,1 +1,13 @@
 AGENTS.md
+
+# Development-only identities, channel blocks and runtime evidence.
+/network/organizations/*
+!/network/organizations/.gitkeep
+/network/channel-artifacts/*
+!/network/channel-artifacts/.gitkeep
+/network/connection-profiles/generated/
+/network/runtime/
+/network/tools/
+/network/.env
+__pycache__/
+*.pyc
