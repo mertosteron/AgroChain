@@ -2,6 +2,19 @@
 
 Status: Stage 1 normative specification with Stage 4 implementation. Public domain, signed evidence and PDC APIs are implemented; [Stage 4 runtime details](STAGE4_PRIVACY.md) distinguish chaincode opening checks from future backend attachment APIs. Every JSON example below is synthetic, not a committed business record. The identified signature/commitment vector is executable in Go and Java. Storage destinations remain fixed by [security and privacy](SECURITY_AND_PRIVACY.md).
 
+## Stage 5 API implementation addendum
+
+The [backend guide](../backend/README.md) defines the implemented mutation wrapper
+(`command`, `scenario`, `privateInput`), caller-provided opaque operation ID and
+matching Idempotency-Key. HTTP 201/200 confirmed results use the operation-status
+envelope containing the immutable receipt; HTTP 202 has no success receipt.
+IDEMPOTENCY_CONFLICT is an additional 409 code for changed input under an existing
+actor/operation key. All HTTP responses identify SIMULATED sources and actual
+FABRIC operations in headers. Shared chaincode/PDC schemas remain unchanged.
+Document bytes are now verified and access-controlled through the backend;
+the public lot allowlist is populated only from valid events. Anomaly and review
+records/endpoints remain Stage 6 work.
+
 ## Stage 3 versioned query and implementation addendum
 
 Existing command, batch, custody, receipt and private record schemas are unchanged.
