@@ -55,3 +55,20 @@ privacy-integration:
 privacy-vectors:
 	$(JAVA) "$(ROOT)chaincode/agrochain/test/VerifyVector.java"
 stage4-check: test chaincode-test privacy-vectors verify chaincode-check chaincode-integration privacy-integration
+
+.PHONY: backend-prerequisites backend-prepare backend-test backend-build backend-run backend-integration backend-gateway-test stage5-check
+backend-prerequisites:
+	python3 "$(ROOT)backend/scripts/toolchain.py"
+backend-prepare: privacy-prepare
+	python3 "$(ROOT)backend/scripts/prepare.py"
+backend-test:
+	bash "$(ROOT)backend/mvnw" test
+backend-build:
+	bash "$(ROOT)backend/mvnw" package
+backend-run:
+	AGROCHAIN_ROOT="$(ROOT)" "$(ROOT)network/tools/jdk-21.0.12.1+1/bin/java" -jar "$(ROOT)backend/target/agrochain-backend-0.3.0.jar"
+backend-integration:
+	python3 "$(ROOT)backend/test/integration_test.py"
+backend-gateway-test:
+	AGROCHAIN_ROOT="$(ROOT)" AGROCHAIN_LIVE_TESTS=true bash "$(ROOT)backend/mvnw" -Dtest=GatewayRecoveryTest test
+stage5-check: backend-build chaincode-check backend-integration backend-gateway-test
