@@ -1,5 +1,10 @@
 # AgroChain — Teknik durum incelemesi ve yarışmaya hazırlık yol haritası
 
+> **Aşama 5 kapanış güncellemesi — 22 Eylül 2026:** Spring Boot API, gerçek Java
+> Gateway bağlantısı, dört imzalı kurum simülatörü, işlem kurtarma ve herkese açık
+> güvenli veri görünümü tamamlandı. [Aşama 5 raporu](STAGE5_REPORT.md) canlı test
+> kanıtlarını içerir. Sıradaki aşama açıklanabilir anomali ve kullanıcı arayüzüdür.
+
 > **Aşama 4 kapanış güncellemesi — 21 Eylül 2026:** Canlı ürün akışı, özel veri
 > koleksiyonları, imzalı belge doğrulaması, tekrar/çakışma kontrolü ve dolu kayıtlarla
 > yeniden başlatma doğrulandı. Güncel kanıtlar [Aşama 4 raporunda](STAGE4_REPORT.md).
