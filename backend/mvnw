@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
+export JAVA_HOME="$ROOT/network/tools/jdk-21.0.12.1+1"
+[[ -x "$JAVA_HOME/bin/java" ]] || { echo 'Run make backend-prerequisites first' >&2; exit 1; }
+exec "$ROOT/network/tools/apache-maven-3.9.11/bin/mvn" -B -ntp -f "$ROOT/backend/pom.xml" \
+  "-Dmaven.repo.local=$ROOT/network/runtime/maven" "$@"
