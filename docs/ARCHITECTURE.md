@@ -2,6 +2,24 @@
 
 Status: Stage 1 domain contract with Stage 2 topology and Stage 4 privacy implementation. Verified lifecycle writes, mandatory certificate roles, signed evidence and real PDC access are implemented. See [Stage 4 evidence](STAGE4_REPORT.md) and [runtime APIs](STAGE4_PRIVACY.md). Backend, simulator services and UI remain future stages. [Product scope](PRODUCT_SCOPE.md), [data contracts](DATA_CONTRACTS.md), [security](SECURITY_AND_PRIVACY.md) and [state machines](STATE_MACHINE.md) remain normative companions.
 
+## Stage 5 implementation (2026-09-22)
+
+Spring Boot and Java Gateway now implement the application boundary, with four
+in-process signed institutional simulators, per-actor bearer authentication/MSP
+signers, a SQLite operation journal and protected originals. A valid-event consumer
+builds an explicit public projection with checkpoint/transaction deduplication.
+See [backend API and configuration](../backend/README.md) and
+[executed acceptance](STAGE5_REPORT.md). The earlier Stage 4 status above is
+historical; anomaly/review logic and UI remain Stage 6.
+
+The concrete HTTP contract receives an opaque operation ID from the client and
+requires the matching Idempotency-Key, then journals it before submission. It never
+allocates a new ID on retry. This resolves step 1's earlier allocation wording below.
+InstitutionalAdapter.Request carries a typed command/batch and source/type/scenario;
+the public signed document schema remains unchanged. VerifyOriginal is an internal
+byte-match helper; the HTTP integrity response separately verifies ledger trust,
+signature, commitment and original digest and returns the specified result DTO.
+
 ## Minimal deployment
 
 One local Docker Compose project: four peers (`ProducerMSP`, `LogisticsMSP`, `RetailerMSP`, `RegulatorMSP`), one `agrochannel` channel, and three Raft orderers under a separate `OrdererMSP`. The Stage 2 request supersedes the original `agrochain` channel name and single-orderer assumption. One anchor peer represents each application organization. Three orderers tolerate one crashed node while quorum remains; Raft is not Byzantine fault tolerant. One host/operator still controls all ordering nodes, so organization identities do not demonstrate independent infrastructure or resistance to host compromise. A Go business chaincode package is deferred to Stage 3; Stage 2 installs no chaincode.
@@ -86,7 +104,7 @@ Kafka, if ever needed, would ingest application events after commit. It is not t
 
 ## Application API surface
 
-All routes are planned, under `/api/v1`. Mutations require authenticated actor role and `Idempotency-Key` equal to `operationId`.
+Routes are under `/api/v1`. Stage 5 implements lifecycle, document, operation-status and public-lot endpoints; anomaly/review routes remain planned for Stage 6. Mutations require authenticated actor role and `Idempotency-Key` equal to `operationId`. Exact implemented request/response examples are in the backend guide.
 
 | Route | Responsibility |
 | --- | --- |
