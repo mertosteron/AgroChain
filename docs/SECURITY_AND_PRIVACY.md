@@ -1,5 +1,19 @@
 # AgroChain — security and privacy contract
 
+## Actual Stage 5 backend enforcement (2026-09-22)
+
+Random development bearer tokens select fixed per-MSP/role signers; request headers
+cannot select a different identity. The backend sends transient data only through
+the Retailer Gateway to Retailer/Regulator endorsers. Private reads are evaluate-only;
+the HTTP API cannot order their results. Signed assertions and exact original bytes
+are checked before endorsement and archived in access-restricted local storage.
+SQLite persists operation/evidence/transaction data before submit and recovers
+uncertain outcomes; only a confirmed VALID transaction returns a success receipt.
+Public projection uses an explicit field allowlist and durable valid-event replay.
+The real HTTP and Gateway acceptance evidence is in [Stage 5 report](STAGE5_REPORT.md).
+Loopback HTTP, development tokens, shared host trust, serialized writes and absence
+of production key management are explicit limitations, not production guarantees.
+
 ## Actual Stage 4 enforcement (2026-09-21)
 
 Mandatory certificate roles replace the historical absent-role fallback. Immutable
