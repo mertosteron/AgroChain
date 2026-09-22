@@ -1,16 +1,19 @@
-name: Stage 4 privacy and chaincode
+name: Stage 5 backend and Fabric acceptance
 on:
   pull_request:
-    paths: ['chaincode/**', 'network/**', 'Makefile', '.github/workflows/stage3-chaincode.yml']
+    paths: ['backend/**', 'chaincode/**', 'network/**', 'Makefile', '.github/workflows/stage3-chaincode.yml']
   push:
-    paths: ['chaincode/**', 'network/**', 'Makefile', '.github/workflows/stage3-chaincode.yml']
+    paths: ['backend/**', 'chaincode/**', 'network/**', 'Makefile', '.github/workflows/stage3-chaincode.yml']
   workflow_dispatch:
 permissions:
   contents: read
+concurrency:
+  group: agrochain-acceptance-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   chaincode:
     runs-on: ubuntu-24.04
-    timeout-minutes: 30
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - name: Install checksum-pinned Fabric CLI and Go
@@ -34,6 +37,10 @@ jobs:
           make privacy-prepare
       - name: Domain, privacy, document integrity, endorsement and persistence gate
         run: make stage4-check
+      - name: Prepare pinned Java tools and development API credentials
+        run: make backend-prerequisites backend-prepare
+      - name: HTTP, institutional simulators, Gateway recovery and public projection gate
+        run: make stage5-check
       - name: Verify repeat deployment preserves the release
         run: make chaincode-deploy chaincode-check
       - name: Stop and remove only generated demo artifacts
