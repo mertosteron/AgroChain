@@ -12,3 +12,4 @@ AGENTS.md
 __pycache__/
 *.pyc
 /chaincode/agrochain/build/
+/backend/target/
