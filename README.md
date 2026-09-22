@@ -6,7 +6,23 @@ Stage 2 provisions four organization peers, three Raft orderers and TLS-enabled
 `agrochannel`. Stage 3 adds a tested Go lifecycle domain and deployed public queries.
 Stage 4 enables verified business writes with signed source evidence, mandatory
 certificate roles and three Private Data Collections.
-No backend, government integration, anomaly engine or UI exists yet.
+Stage 5 adds the Spring Boot API, Java Fabric Gateway, signed institutional
+simulators, durable operation recovery and a consumer-safe public read model.
+Government integrations, anomaly engine and UI do not exist yet.
+
+Backend setup, API payloads, credentials and limits are in the
+[backend guide](backend/README.md); executed acceptance is in the
+[Stage 5 report](docs/STAGE5_REPORT.md). On an already bootstrapped Stage 4 network:
+
+```bash
+make backend-prerequisites
+make network-up backend-prepare
+make stage5-check
+make backend-run
+```
+
+The API listens on loopback port 8080. Its source responses are explicitly
+SIMULATED; its blockchain operations use the actual local Fabric network.
 
 Install the pinned prerequisites in the [network guide](network/README.md), then:
 
@@ -47,7 +63,7 @@ Run `make stage4-check` on an already deployed network after `make privacy-prepa
 It creates synthetic batches, inspects real blocks/PDCs and restarts the local
 network without deleting data. It bootstraps immutable simulator trust once using
 the Regulator admin; later runs verify the existing keys. Keep ignored runtime keys
-with the ledger. This is a local test tool, not the Stage 5 simulator/backend service.
+with the ledger. This remains a local test tool; the Stage 5 backend is documented above.
 
 Use Python >=3.10 for network commands. If a shell environment selects an older
 Python, activate a supported interpreter first; on this Arch host the explicit
