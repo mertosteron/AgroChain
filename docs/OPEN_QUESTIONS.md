@@ -1,5 +1,13 @@
 # AgroChain — evidence, assumptions and open questions
 
+## Stage 5 update (2026-09-22)
+
+The Spring Boot/API, authenticated per-MSP Gateway, four simulated signed sources,
+controlled originals, commit recovery and public projection obligations are now
+implemented and tested; see [Stage 5 report](STAGE5_REPORT.md). Remaining production
+key lifecycle, remote TLS/login and capacity work are not pilot claims. Stage 6
+anomaly/review/UI is the next unimplemented stage. The entries below are historical.
+
 ## Stage 4 update (2026-09-21)
 
 The implementation and live verification described as remaining below are now
