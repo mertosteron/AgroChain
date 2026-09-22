@@ -1,7 +1,8 @@
 # AgroChain architecture
 
 Stage 1 domain specification with the Stage 2 network, Stage 3 domain and Stage 4
-verified lifecycle/PDC implementation. See [Stage 4 results](docs/STAGE4_REPORT.md).
+verified lifecycle/PDC implementation. Stage 5 connects Spring Boot, signed
+institutional simulators and durable Gateway workflows; see [Stage 5 results](docs/STAGE5_REPORT.md).
 
 The authoritative technical contract is [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md). This entry point preserves the root-level path required by [AGENTS.md](AGENTS.md); it deliberately does not duplicate the specification.
 
