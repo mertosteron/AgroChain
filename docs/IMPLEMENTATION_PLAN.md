@@ -1,6 +1,6 @@
 # AgroChain — staged implementation plan
 
-Status: Stage 4 implemented and locally verified; see [Stage 4 report](STAGE4_REPORT.md). The historical Stage 3 core-domain/fail-closed boundary below explains the dependency that Stage 4 now closes with verified live lifecycle, PDC, replay/MVCC and populated restart checks. Stage 5 is next and has not been implemented. One stage at a time.
+Status: Stage 5 implemented and locally verified; see [Stage 5 report](STAGE5_REPORT.md). The historical Stage 3/4 dependency discussion below is retained; those gates are closed. Stage 6 is next and has not been implemented. One stage at a time.
 
 ## Stage 1 gate
 
