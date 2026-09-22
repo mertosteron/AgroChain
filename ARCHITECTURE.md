@@ -1,6 +1,7 @@
 # AgroChain architecture
 
-Stage 1 specification only; no system implementation is present.
+Stage 1 domain specification with the Stage 2 network, Stage 3 domain and Stage 4
+verified lifecycle/PDC implementation. See [Stage 4 results](docs/STAGE4_REPORT.md).
 
 The authoritative technical contract is [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md). This entry point preserves the root-level path required by [AGENTS.md](AGENTS.md); it deliberately does not duplicate the specification.
 

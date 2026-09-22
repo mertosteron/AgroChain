@@ -1,5 +1,33 @@
 # AgroChain — evidence, assumptions and open questions
 
+## Stage 4 update (2026-09-21)
+
+The implementation and live verification described as remaining below are now
+completed; see [Stage 4 report](STAGE4_REPORT.md). Mandatory certificate roles,
+source trust, signed openings and PDC persistence replace the Stage 3 closed boundary.
+The entries below retain the historical scope decision. Backend API integration,
+controlled attachment storage and service key lifecycle are Stage 5/future work.
+
+## Stage 3 scope decision and remaining gate
+
+On 2026-09-18 the user resolved the conflict between full live Stage 3 lifecycle
+acceptance and Stage 1's Stage 4 dependency: **preserve Stage 1, implement/test the
+domain, deploy fail-closed writes, and report the full live lifecycle as blocked**.
+This is no longer awaiting approval. Retail prices remain private; no unverified
+commitment-only production workflow is introduced.
+
+The [Stage 3 report](STAGE3_REPORT.md) records the implementation and deployment.
+The 2026-09-21 closure reconciles the stale inspection-only report with that decision.
+The [stage plan](IMPLEMENTATION_PLAN.md) now names the core/deployment gate separately
+from verified live-business acceptance, so Stage 4's dependency is unambiguous.
+Remaining before enabling business writes: provision mandatory business attributes;
+implement trusted source/signature/body/nonce verification and atomic PDC storage;
+then run real populated lifecycle, replay, MVCC, event and batch persistence tests.
+Stage 3's fixed Retailer + Regulator endorsement policy is retained; requiring both
+handoff organizations' peers would be a separate governed policy change, not an MSP
+authorization shortcut. Peer-to-chaincode mutual TLS is a documented future
+hardening option; server TLS is implemented on the local private network.
+
 Status: Stage 1 assumptions, 2026-09-16, with Stage 2 topology revision on 2026-09-17. The repository facts below describe the historical Stage 1 inspection; current network evidence is in [STAGE2_REPORT.md](STAGE2_REPORT.md). Team answers may require a documented contract change.
 
 ## Historical Stage 1 repository facts

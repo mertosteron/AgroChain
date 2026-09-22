@@ -23,6 +23,10 @@ compose() {
     -f "$NETWORK_DIR/compose/compose-agrochain.yaml" "$@"
 }
 helper() { python3 "$NETWORK_DIR/scripts/network.py" "$@"; }
+cc_compose() {
+  docker compose --project-name agrochain-chaincode --env-file "$NETWORK_DIR/runtime/chaincode/service.env" \
+    -f "$NETWORK_DIR/compose/compose-chaincode.yaml" "$@"
+}
 need() { command -v "$1" >/dev/null || die "Missing $1; see network/README.md prerequisites"; }
 require_docker() {
   need docker

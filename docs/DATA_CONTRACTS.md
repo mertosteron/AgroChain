@@ -1,6 +1,43 @@
 # AgroChain — data contracts v1
 
-Status: Stage 1 normative specification, not an implemented API or chaincode. Every JSON example is synthetic. Only the explicitly identified signature/commitment vector is cryptographically verifiable; transaction IDs in examples are illustrative, not evidence of commits. Storage destinations are fixed by [security and privacy](SECURITY_AND_PRIVACY.md).
+Status: Stage 1 normative specification with Stage 4 implementation. Public domain, signed evidence and PDC APIs are implemented; [Stage 4 runtime details](STAGE4_PRIVACY.md) distinguish chaincode opening checks from future backend attachment APIs. Every JSON example below is synthetic, not a committed business record. The identified signature/commitment vector is executable in Go and Java. Storage destinations remain fixed by [security and privacy](SECURITY_AND_PRIVACY.md).
+
+## Stage 3 versioned query and implementation addendum
+
+Existing command, batch, custody, receipt and private record schemas are unchanged.
+The user explicitly selected disabled live mutations pending Stage 4. Retail price
+is still private; Stage 3 never accepts public monetary fields. Replay remains
+`DUPLICATE_TRANSACTION` for both identical and changed inputs, without publishing
+a digest of private input. Successful receipt/state/event creation is currently
+unit-harness evidence only.
+
+New query types, fully specified in the [chaincode guide](../chaincode/agrochain/README.md):
+
+- `agrochain.health.v1`: schemaVersion, version, writesEnabled (false),
+  evidenceVerification (`UNAVAILABLE_STAGE_3`). No arguments.
+- `agrochain.page-request.v1`: schemaVersion, filter, pageSize (integer 1–100),
+  bookmark (empty initially, otherwise opaque query-scoped token, at most 512 chars).
+- `agrochain.page.v1`: schemaVersion, records (public Batch or Receipt array), bookmark.
+  Used by GetBatchHistory, QueryBatchesByOwner and QueryBatchesByState. GetOperation
+  looks up an operation only within the caller MSP namespace. BatchExists takes a
+  BAT ID and returns a boolean. Existing exact-ID queries retain their names.
+
+The first implementation finalizes event v1 with non-sensitive `txTime`,
+`previousState`, `newState` in addition to the fields already specified in
+STATE_MACHINE. Empty previousState denotes creation; no second state-change event
+is emitted. No live business event or record requires migration because writes are
+disabled. There is no commercial-data classification change.
+
+Internal composite indexes supplement the canonical primary keys: owner(MSP,batchId)
+and state(state,batchId) contain the batch ID; pendingTransfer(batchId) contains the
+transfer ID; costReference(costId) and reportReference(reportId) contain batch ID;
+documentReference(documentId) contains {batchId,operationId}. These are internal
+opaque lookup values, not new primary document/cost/report schemas. They do not
+substitute for Stage 4 document envelopes, sourceUse or nonceUse verification.
+
+Additional fixed error codes: TRANSFER_ALREADY_EXISTS, REPORT_ALREADY_EXISTS,
+INVALID_PAGE and EVIDENCE_VERIFICATION_UNAVAILABLE. The latter means the deployment
+must not execute business writes; it is not an institutional verification result.
 
 ## Common encoding and validation
 

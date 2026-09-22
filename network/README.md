@@ -1,8 +1,21 @@
 # AgroChain local Fabric network — Stage 2
 
+Stage 3/4 extension: the network supports four TLS CCAAS services via
+`compose/compose-chaincode.yaml`. [Chaincode documentation](../chaincode/agrochain/README.md)
+describes build/deploy/test/upgrade commands. `make network-down` stops these first;
+`make network-up` restores them when generated service configuration exists.
+No Stage 2 ledger volume or identity is replaced.
+
+`make verify` retains topology, TLS, MSP/channel, lifecycle-query and peer-restart
+checks while allowing deployed chaincode. To assert the original Stage 2 empty
+chaincode condition on an undeployed network, use `AGROCHAIN_VERIFY_EMPTY=1 make verify`.
+Use `make privacy-prepare` and `make stage4-check` to verify the deployed definition,
+signed lifecycle and PDC behavior. See the [Stage 4 runbook](../docs/STAGE4_PRIVACY.md)
+for Python cryptography/JDK requirements; network health alone proves no business flow.
+
 Linux x86-64 competition pilot: four application organizations, one peer and anchor
 each, `agrochannel`, and three TLS-enabled Raft orderers in a separate `OrdererMSP`.
-No business chaincode, backend, simulator or UI is deployed.
+Stage 4 business chaincode is deployed; backend, simulator services and UI remain future work.
 See [Stage 2 evidence](../docs/STAGE2_REPORT.md) for executed checks and limitations.
 
 ```mermaid
@@ -57,8 +70,8 @@ development-only credentials. Production identity management requires Fabric CA 
 institutional PKI with issuance controls, renewal and revocation.
 
 Cryptogen NodeOUs distinguish admin/client/peer/orderer. It does **not** issue the
-`agrochain.role` attributes required by the domain contract. Stage 3 must arrange
-role-bearing test identities before real role-authorized domain tests; Stage 5 must
+`agrochain.role` attributes required by the domain contract. Stage 4's `privacy-prepare`
+issues development role-bearing certificates using the generated CAs; Stage 5 must
 provision separate application signers. No business permission is inferred from User1
 or administrative credentials, and the Stage 1 role contract is not weakened.
 
@@ -246,11 +259,11 @@ proposal routing to Retailer/Regulator gateways and explicit endorsers; Producer
 Logistics profiles do not authorize sending all private payloads through those peers.
 
 Stable Stage 1 collection definitions are prepared in `config/collections.json`:
-`tradePrivate`, `freightPrivate`, `retailAuditPrivate`. They are **not deployed**.
+`tradePrivate`, `freightPrivate`, `retailAuditPrivate`. They are deployed and exercised.
 One shared channel, V2_5 application capabilities and cross-organization anchors/gossip
-prepare for PDCs. Privacy enforcement, gossip recovery of actual private records and
-business role checks remain Stage 4 evidence. Stage 3 must implement packaging,
-deployment and actual chaincode execution; no deployment capability is claimed here.
+support PDCs. Stage 4 demonstrates actual private records and role enforcement;
+see the [acceptance report](../docs/STAGE4_REPORT.md). Packaging, deployment and
+actual chaincode execution use the same Make/network tooling.
 
 ## Troubleshooting and boundaries
 
@@ -266,8 +279,8 @@ deployment and actual chaincode execution; no deployment capability is claimed h
   of demo data, `make clean-generated`, then `make bootstrap`.
 - TLS clock/certificate failure: inspect system clock and certificate validity; never
   disable TLS verification as a workaround.
-- `verify` fails after Stage 3 installs chaincode: expected; its zero-chaincode assertion
-  is a Stage 2 gate. Introduce a separate stage-aware verifier in Stage 3.
+- Unexpected empty-chaincode assertion after deployment: unset AGROCHAIN_VERIFY_EMPTY;
+  that opt-in check applies only to the original Stage 2 undeployed condition.
 
 This stage does not establish production readiness, physical source truth, ministry
 integration, confidential data isolation, throughput or nationally distributed trust.

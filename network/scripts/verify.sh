@@ -22,12 +22,17 @@ for org in "${ORGS[@]}"; do
   configtxlator proto_decode --input "$NETWORK_DIR/runtime/$org-config.block" --type common.Block \
     --output "$NETWORK_DIR/runtime/$org-config.json"
   helper verify-config "$NETWORK_DIR/runtime/$org-config.json"
-  peer lifecycle chaincode queryinstalled --output json | jq -e '(.installed_chaincodes // []) | length == 0' >/dev/null
-  peer lifecycle chaincode querycommitted -C "$CHANNEL_NAME" --output json | jq -e '(.chaincode_definitions // []) | length == 0' >/dev/null
+  if [[ "${AGROCHAIN_VERIFY_EMPTY:-0}" == 1 ]]; then
+    peer lifecycle chaincode queryinstalled --output json | jq -e '(.installed_chaincodes // []) | length == 0' >/dev/null
+    peer lifecycle chaincode querycommitted -C "$CHANNEL_NAME" --output json | jq -e '(.chaincode_definitions // []) | length == 0' >/dev/null
+  else
+    peer lifecycle chaincode queryinstalled --output json | jq -e '.installed_chaincodes // [] | type == "array"' >/dev/null
+    peer lifecycle chaincode querycommitted -C "$CHANNEL_NAME" --output json | jq -e '.chaincode_definitions // [] | type == "array"' >/dev/null
+  fi
   # A normal client identity can read channel information too; no business role claim.
   peer_env "$org" User1
   peer channel getinfo -c "$CHANNEL_NAME"
-  note "PASS $org admin/client channel queries; no chaincode installed or committed"
+  note "PASS $org admin/client channel and lifecycle queries"
 done
 # Restart every peer in turn to test actual persistence/reconnection, not just status.
 for org in "${ORGS[@]}"; do

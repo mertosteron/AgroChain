@@ -1,6 +1,51 @@
 # AgroChain — security and privacy contract
 
-Status: Stage 1, planned controls; no deployed enforcement is claimed. [Data contracts](DATA_CONTRACTS.md) define exact fields; [state machines](STATE_MACHINE.md) define operation preconditions.
+## Actual Stage 4 enforcement (2026-09-21)
+
+Mandatory certificate roles replace the historical absent-role fallback. Immutable
+Regulator-admin bootstrap registers four simulated source keys. Real chaincode
+checks signatures, salted commitments, body bindings and replay indices before
+atomically writing public records and three PDCs. Member/nonmember clients and
+nonmember peers, original/modified documents, shared block/event/log leakage and
+populated restart are tested. See [report](STAGE4_REPORT.md) and
+[runtime contract and limitations](STAGE4_PRIVACY.md). No government API is connected.
+
+## Historical Stage 3 enforcement (2026-09-18; superseded above)
+
+The user explicitly selected the Stage 1 fail-closed deployment boundary. Official
+Fabric client identity APIs supply the MSP and any `agrochain.role` attribute;
+caller-supplied MSP/role/transaction/time fields are rejected. All seven business
+entry points are present, but authorized well-formed calls stop with
+EVIDENCE_VERIFICATION_UNAVAILABLE before state reads/writes/events. Successful domain
+tests use a provider compiled only into test binaries. No runtime switch or admin
+method enables it. No evidence assertion is accepted on the network.
+
+Cryptogen identities still lack business attributes. Per the user's explicitly
+allowed Stage 3 fallback, missing attributes receive MSP-only checks; a present
+attribute must match the organization's business role. This is a temporary
+authorization limitation, including for attribute-less Admin identities, not proof
+of application-user role enforcement. Stage 4 must provision and require roles
+before enabling writes. Regulator has no custody mutation authority.
+
+The chaincode definition and unused collection definitions retain Retailer +
+Regulator endorsements. All four admins approved it. Real integration tests verify
+that a Regulator-only endorsed health transaction is invalid at commit. Two-party
+custody consent in domain tests is separate from peer endorsement; no SBE is added.
+
+Only public DTOs are serializable as state/events. Retail price remains in the
+planned retailAuditPrivate record; Stage 3 stores no monetary values anywhere.
+No PDC handling, salt/signature verification, source registry or document integrity
+implementation exists yet. Public commitment/reference interfaces are internal test
+seams, not verified institutional evidence. See [Stage 3 report](STAGE3_REPORT.md)
+and [chaincode guide](../chaincode/agrochain/README.md) for exact tests and handoff.
+
+Four external chaincode services use server TLS on the private Docker network, no
+host ports, no Docker socket, read-only filesystems and dropped capabilities. Their
+development private keys remain in ignored runtime files and never enter packages.
+Mutual peer-to-chaincode TLS is not configured; the shared host/network operator
+remains trusted. These controls do not establish independent-host isolation.
+
+The following is the Stage 1 normative contract; Stage 5/6 backend and review controls remain planned. The Stage 4 runbook identifies implemented controls. [Data contracts](DATA_CONTRACTS.md) define exact fields; [state machines](STATE_MACHINE.md) define operation preconditions.
 
 ## Identities, submission and endorsement
 

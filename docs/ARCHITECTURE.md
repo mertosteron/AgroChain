@@ -1,6 +1,6 @@
 # AgroChain — architecture contract
 
-Status: Stage 1 domain contract with the explicitly requested Stage 2 network revision. Domain behavior remains planned. [Product scope](PRODUCT_SCOPE.md) fixes the use case; [data contracts](DATA_CONTRACTS.md), [security](SECURITY_AND_PRIVACY.md) and [state machines](STATE_MACHINE.md) are normative companions.
+Status: Stage 1 domain contract with Stage 2 topology and Stage 4 privacy implementation. Verified lifecycle writes, mandatory certificate roles, signed evidence and real PDC access are implemented. See [Stage 4 evidence](STAGE4_REPORT.md) and [runtime APIs](STAGE4_PRIVACY.md). Backend, simulator services and UI remain future stages. [Product scope](PRODUCT_SCOPE.md), [data contracts](DATA_CONTRACTS.md), [security](SECURITY_AND_PRIVACY.md) and [state machines](STATE_MACHINE.md) remain normative companions.
 
 ## Minimal deployment
 

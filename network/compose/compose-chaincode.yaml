@@ -1,0 +1,35 @@
+name: agrochain-chaincode
+x-chaincode: &chaincode
+  image: ${CHAINCODE_IMAGE:?Run chaincode-package}
+  user: ${CHAINCODE_UID:?}:${CHAINCODE_GID:?}
+  read_only: true
+  restart: unless-stopped
+  security_opt: [no-new-privileges:true]
+  cap_drop: [ALL]
+  networks: [fabric]
+  stop_grace_period: 10s
+services:
+  producer:
+    <<: *chaincode
+    container_name: agrochain-cc-producer
+    environment: {CHAINCODE_ID: '${PRODUCER_PACKAGE_ID:?}'}
+    volumes: [../runtime/chaincode/producer/tls:/tls:ro]
+  logistics:
+    <<: *chaincode
+    container_name: agrochain-cc-logistics
+    environment: {CHAINCODE_ID: '${LOGISTICS_PACKAGE_ID:?}'}
+    volumes: [../runtime/chaincode/logistics/tls:/tls:ro]
+  retailer:
+    <<: *chaincode
+    container_name: agrochain-cc-retailer
+    environment: {CHAINCODE_ID: '${RETAILER_PACKAGE_ID:?}'}
+    volumes: [../runtime/chaincode/retailer/tls:/tls:ro]
+  regulator:
+    <<: *chaincode
+    container_name: agrochain-cc-regulator
+    environment: {CHAINCODE_ID: '${REGULATOR_PACKAGE_ID:?}'}
+    volumes: [../runtime/chaincode/regulator/tls:/tls:ro]
+networks:
+  fabric:
+    external: true
+    name: agrochain-fabric

@@ -5,4 +5,5 @@ bash "$NETWORK_DIR/scripts/prerequisites.sh"
 require_generated
 compose up -d --wait --wait-timeout "$WAIT_SECONDS"
 wait_healthy
+if [[ -f "$NETWORK_DIR/runtime/chaincode/service.env" ]]; then cc_compose up -d; fi
 note 'All seven nodes are healthy; run make channel-create'

@@ -1,6 +1,6 @@
 # AgroChain — staged implementation plan
 
-Status: Stage 1 contract; Stage 2 network gate PASS on the local Arch Linux test environment, 2026-09-17. [Stage 2 report](STAGE2_REPORT.md) records commands, versions, evidence and limitations. No business chaincode, backend or UI exists. [Open questions](OPEN_QUESTIONS.md) identifies assumptions that may require a contract revision. One stage at a time; a failed mandatory gate stops progress.
+Status: Stage 4 implemented and locally verified; see [Stage 4 report](STAGE4_REPORT.md). The historical Stage 3 core-domain/fail-closed boundary below explains the dependency that Stage 4 now closes with verified live lifecycle, PDC, replay/MVCC and populated restart checks. Stage 5 is next and has not been implemented. One stage at a time.
 
 ## Stage 1 gate
 
@@ -8,17 +8,38 @@ This document set fixes the route, product/state semantics, organization roles, 
 
 ## Remaining seven stages
 
+### Stage 3 / Stage 4 acceptance boundary
+
+The scope decision recorded on 2026-09-18 in [open questions](OPEN_QUESTIONS.md)
+preserves the Stage 1 security contract: test the complete domain, deploy queries
+and fail-closed mutation entry points, and defer verified live writes. The seven
+core Stage 3 criteria in AGENTS.md are exercised at the domain/harness layer;
+deployment, authorization rejection, actual endorsement and persistence are also
+tested on Fabric. No test-only provider is deployed. A Stage 3 PASS must always be
+qualified by this scope; it is not a PASS for the original expanded live-write set.
+
+For the sequential dependency below, **Stage 3 PASS means that approved core and
+deployment gate**, not the future verified product workflow. Stage 4 must implement
+and pass the real populated lifecycle, replay/MVCC, business-event and populated
+public/private restart checks in addition to its privacy/integrity criteria, before
+Stage 5 may begin. This makes the existing test-layer accommodation explicit without
+enabling an unverified workflow or discarding any final-product acceptance test.
+
+`make stage3-check` runs the approved gate on an already deployed network. Its
+positive product lifecycle evidence is explicitly unit/harness evidence; its real
+commits are health probes. The completion report records both layers separately.
+
 | Stage / dependencies | Concrete deliverables | Verification and mandatory acceptance gate |
 | --- | --- | --- |
 | **2 — Fabric network — PASS locally**, requires Stage 1 PASS | Fabric 2.5.15 pins/checksum; Compose; four application MSPs/peers; separate OrdererMSP with three Raft orderers; agrochannel; TLS/cryptogen development identities; stable collection definitions prepared but undeployed; profile template; Make lifecycle/verification and Arch guide | Explicit Stage 2 request supersedes the single-orderer/smoke-contract plan: no chaincode installed or committed. Bootstrap from empty generated state; verify all nodes, TLS including negative checks, four memberships/MSPs/anchors, three active consenters and exact TLS certificates, admin/client channel queries, peer restarts, shutdown/re-bootstrap, cleanup and rerun. Actual business deployment, endorsement execution and PDC behavior move to their implementation stages. See report for completed local evidence. |
 | **3 — Core chaincode**, requires Stage 2 PASS | Go package; public batch/transfer/receipt state; command schemas and storage seams for evidence; owner/custody rules; fixed quantities; unique IDs/operations; errors/events; public queries | Unit/contract-harness tests for create, pickup, freight reference presence, delivery/ownership, query; wrong MSP/role/recipient; quantity mismatch; duplicate replay; invalid state/version; simulated concurrent acceptance. Real-network checks at this gate cover deployment and read/smoke behavior only. Test helpers may supply explicit test-only evidence, but no enabled network path may accept unverified source assertions. Product writes awaiting Stage 4 verification remain disabled on deploy; Stage 3 domain evidence uses verifier/PDC test doubles and is labeled accordingly. |
-| **4 — Privacy and evidence**, requires Stage 3 PASS | PDC writes/reads; exact member/endorsement policies; source-key bootstrap registry; signature and commitment verification; private record salts; original-byte integrity verifier; signed test fixtures; eliminate/disable all runtime test-verifier paths | Actual member client retrieves intended trade/freight/audit data; nonmember client and nonmember peer cannot retrieve it; shared provenance remains readable; direct chaincode invalid-signature/binding/replay rejects; altered opening/attachment fails; valid original succeeds; Go/Java reproduce vector; inspect blocks/events/logs for leakage. Missing private data yields explicit unavailable, not default zero. Test fixture generators are not institutional integrations. |
+| **4 — Privacy and evidence**, requires Stage 3 core/deployment PASS as defined above | PDC writes/reads; exact member/endorsement policies; source-key bootstrap registry; signature and commitment verification; private record salts; original-byte integrity verifier; signed test fixtures; eliminate/disable all runtime test-verifier paths | Actual member client retrieves intended trade/freight/audit data; nonmember client and nonmember peer cannot retrieve it; shared provenance remains readable; direct chaincode invalid-signature/binding/replay rejects; altered opening/attachment fails; valid original succeeds; Go/Java reproduce vector; inspect blocks/events/logs for leakage. Verified populated product lifecycle, real duplicate/MVCC handling, business events and populated public/private restart persistence must pass here. Missing private data yields explicit unavailable, not default zero. Test fixture generators are not institutional integrations. |
 | **5 — Spring Boot and four institutional simulators**, requires Stage 4 PASS | Gateway integration; authenticated per-MSP signers; CKS, EFATURA (purchase + freight), HKS, UETDS adapters and signed scenario sources; API; operation recovery; controlled attachments; public projection/checkpoint; API documentation | Whole batch follows producer → carrier → retailer through backend using signed simulator data; all four source labels remain SIMULATED; attachment/evidence and privacy queries work. Meaningful 4xx/5xx/pending errors; forged role, dependency outage, timeout-after-commit, crash/replay and duplicates tested. Price report can be stored; anomaly/UI completion remains Stage 6. |
 | **6 — Explainable anomaly and UI**, requires Stage 5 PASS | Deterministic backend score and chaincode attestation check; immutable policy snapshot; pending/retry workflow; review state/actions; actor/reviewer/consumer pages and lot QR; no ML training | A jury member compares normal 40% and suspicious 85% cases against 50%, explains inputs/basis, and performs a permitted review transition. Test exactly 50%, above boundary, falling price, zero purchase and missing evidence. Consumer endpoint/UI omit every PDC-only value and review classification; logistics denied trade data. No UI-only mock of required backend capabilities. |
 | **7 — Tests and measurement**, requires Stage 6 PASS | Unified test runner; clean-seed integration/E2E cases for all three scenarios; negative access tests against real peers; concurrency/recovery tests; environment and results report; basic latency observations | All competition-critical tests pass. Two clean reset/seed runs reproduce outcomes. Record hardware, OS, versions, topology, warm/cold state, payload sizes, sample count, concurrency and failures. Measure submit-to-VALID-commit, shared/private query and full route duration (e.g. 30 sequential local samples); report median/p95 with methodology. No national-capacity inference or SLA claim. |
 | **8 — Competition package**, requires Stage 7 PASS | Final README/install guide; architecture figure; deterministic seed commands; 10–12 slides; three-minute demo runbook; preflight; local recorded fallback and screenshot/evidence pack; clear simulator/privacy limitations | A teammate on another supported machine follows only documented steps, starts environment, loads scenarios, shows route/normal/suspicious/tamper/replay and private/public boundaries. No live external services required during presentation once dependencies are installed. Rehearse live and labeled fallback; record unresolved environmental constraints. |
 
-Stage 3's test-double allowance is a test-layer dependency accommodation, not permission to claim authenticated documents or deploy an insecure evidence bypass. Stage 4 is the gate for enabling verified product writes on the demonstration network. Stage 2 validates channel genesis/configuration and persistence without chaincode. Cryptogen admin/client identities lack business-role attributes; Stage 3 must arrange suitable role-bearing test identities and chaincode packaging/execution before claiming domain authorization or deployment.
+Stage 3's test-double allowance is a test-layer dependency accommodation, not permission to claim authenticated documents or deploy an insecure evidence bypass. Stage 4 remains the gate for verified product writes. Cryptogen identities lack business attributes; the user's Stage 3 MSP-only fallback is implemented and explicitly limited. Present role attributes are checked in code/tests, but real role-bearing identities must be provisioned and required before Stage 4 enables writes. The implemented command surface and exact deployed boundary are in the [chaincode guide](../chaincode/agrochain/README.md).
 
 ## Planned reproducible command surface
 

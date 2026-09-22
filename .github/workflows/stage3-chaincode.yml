@@ -1,0 +1,43 @@
+name: Stage 4 privacy and chaincode
+on:
+  pull_request:
+    paths: ['chaincode/**', 'network/**', 'Makefile', '.github/workflows/stage3-chaincode.yml']
+  push:
+    paths: ['chaincode/**', 'network/**', 'Makefile', '.github/workflows/stage3-chaincode.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  chaincode:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - name: Install checksum-pinned Fabric CLI and Go
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          source network/.env.example
+          mkdir -p network/tools
+          curl --fail --location --retry 3 --proto '=https' --tlsv1.2 \
+            "https://github.com/hyperledger/fabric/releases/download/v${FABRIC_VERSION}/hyperledger-fabric-linux-amd64-${FABRIC_VERSION}.tar.gz" \
+            --output network/tools/fabric.tar.gz
+          printf '%s  %s\n' "$FABRIC_LINUX_AMD64_SHA256" network/tools/fabric.tar.gz | sha256sum --check
+          tar -xzf network/tools/fabric.tar.gz -C network/tools
+          make chaincode-prerequisites
+          make chaincode-deps
+      - name: Bootstrap and deploy from a fresh runner
+        run: make bootstrap chaincode-deploy
+      - name: Prepare development roles and source signing keys
+        run: |
+          python3 -m pip install cryptography==46.0.3
+          make privacy-prepare
+      - name: Domain, privacy, document integrity, endorsement and persistence gate
+        run: make stage4-check
+      - name: Verify repeat deployment preserves the release
+        run: make chaincode-deploy chaincode-check
+      - name: Stop and remove only generated demo artifacts
+        if: always()
+        run: |
+          make network-down
+          make clean-generated

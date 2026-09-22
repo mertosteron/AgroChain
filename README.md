@@ -3,7 +3,10 @@
 TEKNOFEST agricultural traceability pilot using Hyperledger Fabric. Stage 1 contracts
 live in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) and its companion documents.
 Stage 2 provisions four organization peers, three Raft orderers and TLS-enabled
-`agrochannel`. No business chaincode, backend, government integration or UI exists yet.
+`agrochannel`. Stage 3 adds a tested Go lifecycle domain and deployed public queries.
+Stage 4 enables verified business writes with signed source evidence, mandatory
+certificate roles and three Private Data Collections.
+No backend, government integration, anomaly engine or UI exists yet.
 
 Install the pinned prerequisites in the [network guide](network/README.md), then:
 
@@ -20,3 +23,32 @@ and the seven named demo ledger volumes after shutdown. `make test` checks confi
 and cleanup safety. See [Stage 2 results](docs/STAGE2_REPORT.md) for evidence, acceptance
 status, assumptions and the Stage 3 handoff. This is a local competition test network,
 not a production or nationwide deployment.
+
+After Stage 2 setup, build and deploy the verified contract (Python >=3.10 with
+`cryptography` and Java >=17 are required for the privacy acceptance tools):
+
+```bash
+make chaincode-prerequisites
+make chaincode-deps
+make chaincode-test
+make chaincode-deploy
+make privacy-prepare
+make stage4-check
+```
+
+The [chaincode guide](chaincode/agrochain/README.md) documents schemas, authorization,
+exact pins and lifecycle/upgrade commands. The [Stage 3 report](docs/STAGE3_REPORT.md)
+records the historical core-domain gate. The [Stage 4 report](docs/STAGE4_REPORT.md)
+records real populated lifecycle, privacy, integrity and persistence acceptance.
+Test evidence providers are never available in deployment. Source fixtures are
+explicitly SIMULATED; purchase, freight and retail values stay private.
+
+Run `make stage4-check` on an already deployed network after `make privacy-prepare`.
+It creates synthetic batches, inspects real blocks/PDCs and restarts the local
+network without deleting data. It bootstraps immutable simulator trust once using
+the Regulator admin; later runs verify the existing keys. Keep ignored runtime keys
+with the ledger. This is a local test tool, not the Stage 5 simulator/backend service.
+
+Use Python >=3.10 for network commands. If a shell environment selects an older
+Python, activate a supported interpreter first; on this Arch host the explicit
+working invocation is `PATH=/usr/bin:/bin:$PATH make stage4-check JAVA=/usr/lib/jvm/java-26-openjdk/bin/java`.
