@@ -1,6 +1,6 @@
 # AgroChain — state machines
 
-Status: Stage 1 normative plan. Lifecycle names replace the illustrative sequence in `AGENTS.md`. [Data contracts](DATA_CONTRACTS.md) define command and record schemas; [security](SECURITY_AND_PRIVACY.md) defines endorsements separately from callers.
+Status: Normative contract implemented through Stage 6. Lifecycle names replace the illustrative sequence in `AGENTS.md`. [Data contracts](DATA_CONTRACTS.md) define command and record schemas; [security](SECURITY_AND_PRIVACY.md) defines endorsements separately from callers.
 
 ## Product lifecycle
 
