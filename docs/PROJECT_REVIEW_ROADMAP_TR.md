@@ -1,5 +1,12 @@
 # AgroChain — Teknik durum incelemesi ve yarışmaya hazırlık yol haritası
 
+> **Aşama 6 kapanış güncellemesi — 23 Eylül 2026:** Açıklanabilir tamsayı fiyat
+> analizi, zincirde sonuç doğrulaması, özel denetçi incelemesi, aktör ekranları ve
+> tüketici QR görünümü tamamlandı. Gerçek ağda 14 HTTP kabul testi ve tarayıcıda
+> üreticiden inceleme sonucuna kadar akış doğrulandı. Ayrıntılar
+> [Aşama 6 raporunda](STAGE6_REPORT.md). Sıradaki iş Aşama 7 test ve ölçüm paketi;
+> sonrasında Aşama 8 yarışma sunumu ve kurulum/demo paketidir.
+
 > **Aşama 5 kapanış güncellemesi — 22 Eylül 2026:** Spring Boot API, gerçek Java
 > Gateway bağlantısı, dört imzalı kurum simülatörü, işlem kurtarma ve herkese açık
 > güvenli veri görünümü tamamlandı. [Aşama 5 raporu](STAGE5_REPORT.md) canlı test
