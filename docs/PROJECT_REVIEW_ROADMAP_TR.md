@@ -1,5 +1,18 @@
 # AgroChain — Teknik durum incelemesi ve yarışmaya hazırlık yol haritası
 
+> **Aşama 8 kapanış güncellemesi — 23 Eylül 2026:** [Yarışma paketi](competition/README.md),
+> 12 slayt, çevrimdışı HTML, sabit demo yükleyicisi ve kurulum kılavuzu hazır.
+> Yeni kimlik/boş test diskleriyle kurulum ve aynı işlemleri koruyan tekrar yükleme
+> doğrulandı. [Kabul raporu](STAGE8_REPORT.md) sınırları ve kanıtları listeler.
+> Aşağıdaki aşama planları, ilk incelemenin tarihsel kayıtlarıdır.
+
+> **Aşama 7 kapanış güncellemesi — 23 Eylül 2026:** Birleşik test kapısı, yerel
+> gecikme ölçümleri ve iki bağımsız temiz kurulum tamamlandı. Her iki turda normal
+> ve şüpheli sonuçlar yeniden üretildi; belge tahrifatı/PDC/tekrar kontrolleri geçti.
+> Temiz kurulumda bulunan izin ve önbellek temizleme hataları düzeltildi. Özgün
+> ledger ve kimlikler korunarak ağ geri açıldı. [Aşama 7 raporu](STAGE7_REPORT.md)
+> ölçümleri ve sınırlamaları içerir. Sıradaki aşama **Aşama 8 yarışma paketidir**.
+
 > **Aşama 6 kapanış güncellemesi — 23 Eylül 2026:** Açıklanabilir tamsayı fiyat
 > analizi, zincirde sonuç doğrulaması, özel denetçi incelemesi, aktör ekranları ve
 > tüketici QR görünümü tamamlandı. Gerçek ağda 14 HTTP kabul testi ve tarayıcıda
