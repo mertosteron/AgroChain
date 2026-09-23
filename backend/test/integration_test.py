@@ -2,6 +2,7 @@
 """Real HTTP -> Java Fabric Gateway -> signed simulator -> PDC acceptance."""
 import base64
 import copy
+from contextlib import closing
 import json
 import os
 from pathlib import Path
@@ -113,31 +114,35 @@ class BackendIntegration(unittest.TestCase):
     def test_02_normal_and_suspicious_full_workflows(self):
         self.__class__.scenarios = []
         for scenario, price in [("NORMAL", 2800), ("SUSPICIOUS", 3700)]:
-            create = create_request(); create["scenario"] = scenario
-            batch = create["command"]["batchId"]
-            pickup, delivery, lot = ident("TRF"), ident("TRF"), ident("LOT")
-            steps = [("producer", "CreateBatch", "/batches", create["command"]["payload"]),
-                     ("producer", "OfferPickup", "pickup-offers", {"transferId": pickup, "quantityGrams": 100000}),
-                     ("logistics", "AcceptPickup", "pickup-acceptances", {"transferId": pickup, "quantityGrams": 100000}),
-                     ("logistics", "RecordFreightCost", "freight-costs", {"costId": ident("CST")}),
-                     ("logistics", "OfferDelivery", "delivery-offers", {"transferId": delivery, "quantityGrams": 100000}),
-                     ("retailer", "AcceptDelivery", "delivery-acceptances", {"transferId": delivery, "quantityGrams": 100000}),
-                     ("retailer", "ReportRetailPrice", "retail-reports", {"reportId": ident("RPT"), "retailLotId": lot, "policyId": "CFG-PRICE001"})]
-            requests = []
-            for i, (actor, fn, route, payload) in enumerate(steps):
-                r = copy.deepcopy(create)
-                r["command"].update(command=fn, operationId=ident("OP"), expectedVersion=i, payload=payload)
-                if i == 6:
-                    r["privateInput"] = {"offeredPriceKurusPerKg": price, "currency": "TRY", "taxBasis": "EXCLUDING_TAX", "reportedAt": "2026-09-22T09:00:00.000Z"}
-                path = route if i == 0 else f"/batches/{batch}/{route}"
-                response = self.submit(actor, path, r)
-                self.assertEqual(response["status"], "COMMITTED")
-                self.assertEqual(response["receipt"]["resultVersion"], i+1)
-                self.assertEqual(response["receipt"]["actorMsp"], {"producer": "ProducerMSP", "logistics": "LogisticsMSP", "retailer": "RetailerMSP"}[actor])
-                requests.append((actor, path, r, response))
-            status, b = call("GET", f"/batches/{batch}", "producer")
-            self.assertEqual((status, b["state"], b["ownerMsp"]), (200, "RETAIL_REPORTED", "RetailerMSP"))
-            self.scenarios.append({"batch": batch, "lot": lot, "price": price, "requests": requests})
+            self.scenarios.append(self.run_scenario(scenario, price))
+
+    def run_scenario(self, scenario, price):
+        """Shared real seven-command fixture for acceptance and timed runs."""
+        create = create_request(); create["scenario"] = scenario
+        batch = create["command"]["batchId"]
+        pickup, delivery, lot = ident("TRF"), ident("TRF"), ident("LOT")
+        steps = [("producer", "CreateBatch", "/batches", create["command"]["payload"]),
+                 ("producer", "OfferPickup", "pickup-offers", {"transferId": pickup, "quantityGrams": 100000}),
+                 ("logistics", "AcceptPickup", "pickup-acceptances", {"transferId": pickup, "quantityGrams": 100000}),
+                 ("logistics", "RecordFreightCost", "freight-costs", {"costId": ident("CST")}),
+                 ("logistics", "OfferDelivery", "delivery-offers", {"transferId": delivery, "quantityGrams": 100000}),
+                 ("retailer", "AcceptDelivery", "delivery-acceptances", {"transferId": delivery, "quantityGrams": 100000}),
+                 ("retailer", "ReportRetailPrice", "retail-reports", {"reportId": ident("RPT"), "retailLotId": lot, "policyId": "CFG-PRICE001"})]
+        requests = []
+        for i, (actor, fn, route, payload) in enumerate(steps):
+            r = copy.deepcopy(create)
+            r["command"].update(command=fn, operationId=ident("OP"), expectedVersion=i, payload=payload)
+            if i == 6:
+                r["privateInput"] = {"offeredPriceKurusPerKg": price, "currency": "TRY", "taxBasis": "EXCLUDING_TAX", "reportedAt": "2026-09-22T09:00:00.000Z"}
+            path = route if i == 0 else f"/batches/{batch}/{route}"
+            response = self.submit(actor, path, r)
+            self.assertEqual(response["status"], "COMMITTED")
+            self.assertEqual(response["receipt"]["resultVersion"], i+1)
+            self.assertEqual(response["receipt"]["actorMsp"], {"producer": "ProducerMSP", "logistics": "LogisticsMSP", "retailer": "RetailerMSP"}[actor])
+            requests.append((actor, path, r, response))
+        status, b = call("GET", f"/batches/{batch}", "producer")
+        self.assertEqual((status, b["state"], b["ownerMsp"]), (200, "RETAIL_REPORTED", "RetailerMSP"))
+        return {"batch": batch, "lot": lot, "price": price, "requests": requests}
 
     def test_03_retry_conflict_and_caller_scoped_status(self):
         for actor, path, r, original in self.scenarios[0]["requests"]:
@@ -213,7 +218,7 @@ class BackendIntegration(unittest.TestCase):
         actor, path, r, committed = self.scenarios[0]["requests"][1]
         op = r["command"]["operationId"]
         self.stop()
-        with sqlite3.connect(DATA / "operations.sqlite") as db:
+        with closing(sqlite3.connect(DATA / "operations.sqlite")) as db, db:
             db.execute("UPDATE operations SET state='SUBMITTED_UNKNOWN',receipt=NULL WHERE actor=? AND id=?", (ACTORS[actor], op))
             db.execute("UPDATE evidence SET committed=0 WHERE actor=? AND operation=?", (ACTORS[actor], op))
             db.execute("DELETE FROM projections")
@@ -227,7 +232,7 @@ class BackendIntegration(unittest.TestCase):
         self.assertEqual(status["receipt"], committed["receipt"])
         self.test_06_public_projection_allowlist_and_replay()
         self.assertEqual(self.submit(actor, path, r, 200)["receipt"], committed["receipt"])
-        with sqlite3.connect(DATA / "operations.sqlite") as db:
+        with closing(sqlite3.connect(DATA / "operations.sqlite")) as db, db:
             self.assertEqual(db.execute("SELECT COUNT(*) FROM evidence WHERE actor=? AND operation=? AND committed=0", (ACTORS[actor], op)).fetchone()[0], 0)
 
     def test_10_no_private_credentials_in_logs(self):
@@ -235,7 +240,7 @@ class BackendIntegration(unittest.TestCase):
         for token in TOKENS.values():
             self.assertNotIn(token, log)
         self.assertNotIn("PRIVATE KEY", log)
-        with sqlite3.connect(DATA / "operations.sqlite") as db:
+        with closing(sqlite3.connect(DATA / "operations.sqlite")) as db, db:
             for (bundle,) in db.execute("SELECT bundle FROM evidence"):
                 self.assertNotIn(json.loads(bundle)["saltHex"], log)
         (DATA / "acceptance-summary.json").write_text(json.dumps({"sourceMode": "SIMULATED", "blockchainMode": "FABRIC", "batches": [{"batchId": s["batch"], "lotId": s["lot"]} for s in self.scenarios], "privateValuesOmitted": True}, indent=2)+"\n")
