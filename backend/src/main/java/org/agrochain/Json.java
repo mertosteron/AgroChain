@@ -33,7 +33,7 @@ public final class Json {
         if (v == null || v.isNull()) throw ApiError.of("INVALID_SCHEMA");
         if (v.isObject()) {
             var sorted = new TreeMap<String,JsonNode>(); v.fields().forEachRemaining(e -> sorted.put(e.getKey(),e.getValue()));
-            var fields = new ArrayList<String>(); sorted.forEach((k,x)->fields.add(canonical(MAPPER.valueToTree(k))+":"+canonical(x)));
+            var fields = new ArrayList<String>(); sorted.forEach((k,x)->fields.add(canonical(MAPPER.valueToTree(k))+":"+(k.equals("explanation")?explanation(x):canonical(x))));
             return "{"+String.join(",",fields)+"}";
         }
         if (v.isArray()) { var items=new ArrayList<String>(); v.forEach(x->items.add(canonical(x))); return "["+String.join(",",items)+"]"; }
@@ -43,6 +43,10 @@ public final class Json {
         }
         if (v.isBoolean() || (v.isIntegralNumber() && v.canConvertToLong())) return v.toString();
         throw ApiError.of("INVALID_SCHEMA");
+    }
+    private static String explanation(JsonNode x){
+        if(!x.isTextual() || x.asText().isBlank() || x.asText().codePointCount(0,x.asText().length())>2000 || x.asText().codePoints().anyMatch(c->c<32 || c==127 || c==65533 || (c>=0xd800 && c<=0xdfff)))throw ApiError.of("INVALID_SCHEMA");
+        return encode(x.asText());
     }
     public static void fields(JsonNode node, String... fields) {
         if (node==null || !node.isObject()) throw ApiError.of("INVALID_SCHEMA");
