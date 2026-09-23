@@ -22,6 +22,8 @@ public final class Workflow {
         long version=Json.number(c,"expectedVersion");if(version<0 || version>2147483646)throw ApiError.of("INVALID_SCHEMA");
         JsonNode p=c.get("payload");
         switch(fn){
+            case "EvaluatePrice" -> {Json.fields(p,"anomalyId","reportId");Json.id(Json.text(p,"anomalyId"),"ANM");Json.id(Json.text(p,"reportId"),"RPT");}
+            case "OpenReview","ResolveReview" -> {Json.fields(p,"anomalyId");Json.id(Json.text(p,"anomalyId"),"ANM");}
             case "CreateBatch" -> {
                 Json.fields(p,"productCode","gradeCode","quantityGrams","originRegionCode","harvestDate","logisticsMsp","intendedRetailerMsp");
                 if(!Json.text(p,"logisticsMsp").equals("LogisticsMSP") || !Json.text(p,"intendedRetailerMsp").equals("RetailerMSP"))throw ApiError.of("UNAUTHORIZED_ORGANIZATION");
@@ -39,6 +41,10 @@ public final class Workflow {
             Json.fields(privateInput,"offeredPriceKurusPerKg","currency","taxBasis","reportedAt");
             if(Json.number(privateInput,"offeredPriceKurusPerKg")<0 || Json.number(privateInput,"offeredPriceKurusPerKg")>100000000)throw ApiError.of("INVALID_MONEY");
             EvidenceService.equal(privateInput,"currency","TRY");EvidenceService.equal(privateInput,"taxBasis","EXCLUDING_TAX");
+        }else if(fn.equals("OpenReview") || fn.equals("ResolveReview")){
+            if(fn.equals("OpenReview"))Json.fields(privateInput,"reviewerRef");else Json.fields(privateInput,"reviewerRef","outcome","explanation");
+            Json.id(Json.text(privateInput,"reviewerRef"),"REV");
+            if(fn.equals("ResolveReview") && (!Set.of("EXPLAINED","FOLLOW_UP_RECOMMENDED","INSUFFICIENT_EVIDENCE").contains(Json.text(privateInput,"outcome")) || Json.text(privateInput,"explanation").isBlank() || Json.text(privateInput,"explanation").length()>2000))throw ApiError.of("INVALID_SCHEMA");
         }else Json.fields(privateInput);
         if(Json.bytes(request).length>65536)throw ApiError.of("INVALID_SCHEMA");
     }
@@ -48,7 +54,8 @@ public final class Workflow {
         var row=store.stage(actor,key,request);
         if("FAILED".equals(row.get("state"))){
             ApiError error=ApiError.of((String)row.get("error"));
-            if(error.status!=503)throw error;
+            boolean correctedPolicy=fn.equals("EvaluatePrice") && error.code.equals("POLICY_MISMATCH") && row.get("tx")==null;
+            if(error.status!=503 && !correctedPolicy)throw error;
             store.update("UPDATE operations SET state='PENDING',error=NULL WHERE actor=? AND id=?",actor.key(),key);
         }
         advance(actor,key);
