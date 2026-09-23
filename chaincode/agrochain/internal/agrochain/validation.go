@@ -13,6 +13,9 @@ import (
 )
 
 var messages = map[string]string{
+	"ANOMALY_RESULT_MISMATCH":           "Proposed analysis does not match committed inputs.",
+	"ANOMALY_ALREADY_EXISTS":            "Report has already been evaluated.",
+	"INVALID_REVIEW_TRANSITION":         "Review action is not allowed in the current state.",
 	"INVALID_SCHEMA":                    "Invalid fields or JSON encoding.",
 	"INVALID_IDENTIFIER":                "Invalid identifier.",
 	"UNSUPPORTED_SCHEMA_VERSION":        "Unsupported schema version.",
@@ -145,7 +148,16 @@ func tokenValue(d *json.Decoder, depth int) (any, error) {
 			if _, exists := m[k]; exists {
 				return nil, fail("INVALID_SCHEMA")
 			}
-			v, err := tokenValue(d, depth+1)
+			var v any
+			if k == "explanation" {
+				v, err = d.Token()
+				s, ok := v.(string)
+				if !ok || !validExplanation(s) {
+					return nil, fail("INVALID_SCHEMA")
+				}
+			} else {
+				v, err = tokenValue(d, depth+1)
+			}
 			if err != nil {
 				return nil, err
 			}
@@ -181,6 +193,17 @@ func safeString(s string) bool {
 	}
 	for _, r := range s {
 		if r < 32 || r > 126 {
+			return false
+		}
+	}
+	return true
+}
+func validExplanation(s string) bool {
+	if strings.TrimSpace(s) == "" || utf8.RuneCountInString(s) > 2000 {
+		return false
+	}
+	for _, r := range s {
+		if r < 32 || r == 127 || r == utf8.RuneError {
 			return false
 		}
 	}
@@ -227,6 +250,18 @@ func parseCommand(fn, raw string) (Command, error) {
 }
 func validatePayload(c Command) error {
 	switch c.Command {
+	case "EvaluatePrice", "OpenReview", "ResolveReview":
+		var p analysisInput
+		fields := []string{"anomalyId"}
+		if c.Command == "EvaluatePrice" {
+			fields = append(fields, "reportId")
+		}
+		if err := decode(c.Payload, &p, fields...); err != nil {
+			return err
+		}
+		if !validID(p.AnomalyID, "ANM") || (c.Command == "EvaluatePrice" && !validID(p.ReportID, "RPT")) {
+			return fail("INVALID_IDENTIFIER")
+		}
 	case "CreateBatch":
 		var p createInput
 		if err := decode(c.Payload, &p, "productCode", "gradeCode", "quantityGrams", "originRegionCode", "harvestDate", "logisticsMsp", "intendedRetailerMsp"); err != nil {
@@ -285,6 +320,10 @@ func authorize(actor, role, fn string) error {
 	}
 	expected, expectedRole := "", ""
 	switch fn {
+	case "EvaluatePrice":
+		expected, expectedRole = Regulator, "oracle"
+	case "OpenReview", "ResolveReview":
+		expected, expectedRole = Regulator, "reviewer"
 	case "Bootstrap":
 		expected, expectedRole = Regulator, "admin"
 	case "CreateBatch", "OfferPickup":
