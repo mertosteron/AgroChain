@@ -1,4 +1,12 @@
-# AgroChain chaincode — Stage 4
+# AgroChain chaincode — Stage 6
+
+Release 0.3.0 adds EvaluatePrice (Regulator/oracle), OpenReview and ResolveReview
+(Regulator/reviewer), GetAnomaly and GetReviewHistory (batch ID, private retail audit
+readers). Each accepted command increments batch version; evaluation/review leave
+RETAIL_REPORTED unchanged. Scores, classifications and explanations remain in PDC;
+public references/events contain opaque identifiers only. Integer boundary and
+private review tests are in `internal/agrochain/analysis_test.go`. See the
+[Stage 6 guide](../../docs/STAGE6_UI.md) for complete runtime behavior.
 
 Implemented in Go using the official Fabric shim. Business commands require trusted
 signed evidence and mandatory certificate roles. Before immutable trust bootstrap,
