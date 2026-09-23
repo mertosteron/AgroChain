@@ -20,8 +20,11 @@ public record Actor(String org, String role) {
             case "CreateBatch", "OfferPickup" -> "producer";
             case "AcceptPickup", "RecordFreightCost", "OfferDelivery" -> "logistics";
             case "AcceptDelivery", "ReportRetailPrice" -> "retailer";
+            case "EvaluatePrice", "OpenReview", "ResolveReview" -> "regulator";
             default -> throw ApiError.of("UNSUPPORTED_PILOT_OPERATION");
         };
         if (!org.equals(required)) throw ApiError.of("UNAUTHORIZED_ORGANIZATION");
+        if(command.equals("EvaluatePrice") && !role.equals("oracle"))throw ApiError.of("UNAUTHORIZED_ROLE");
+        if((command.equals("OpenReview") || command.equals("ResolveReview")) && !role.equals("reviewer"))throw ApiError.of("UNAUTHORIZED_ROLE");
     }
 }
