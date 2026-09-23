@@ -90,6 +90,9 @@ func privateLoad(s privateLedger, collection, k string, dst any) error {
 	return nil
 }
 func (e realEvidence) prepare(c Command, b Batch, refs EvidenceRefs) (verified, error) {
+	if c.Command == "EvaluatePrice" || c.Command == "OpenReview" || c.Command == "ResolveReview" {
+		return e.analysis(c, b, refs)
+	}
 	v := verified{Public: writePlan{}}
 	config, err := getConfig(e.s)
 	if err != nil {
@@ -316,6 +319,9 @@ func mayRead(actor, role, collection string) bool {
 	return (collection == trade && actor == Producer && role == "producer") || (collection == freight && actor == Logistics && role == "carrier")
 }
 func privateQuery(s privateLedger, actor, role, fn, id string, transient map[string][]byte) (any, error) {
+	if fn == "GetAnomaly" || fn == "GetReviewHistory" {
+		return analysisQuery(s, actor, role, fn, id)
+	}
 	collection := map[string]string{"GetPurchase": trade, "GetFreightCost": freight, "GetRetailReport": audit}[fn]
 	if !mayRead(actor, role, collection) {
 		return nil, fail("PRIVATE_DATA_ACCESS_DENIED")
