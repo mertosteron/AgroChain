@@ -51,11 +51,12 @@ class BackendIntegration(unittest.TestCase):
     log = None
 
     @classmethod
-    def start(cls, disabled="", endpoint=None):
+    def start(cls, disabled="", endpoint=None, threshold="50"):
         DATA.mkdir(parents=True, exist_ok=True)
         cls.log = (DATA / "acceptance.log").open("a")
         env = dict(os.environ, AGROCHAIN_ROOT=str(ROOT), AGROCHAIN_BACKEND_DATA=str(DATA), AGROCHAIN_API_PORT=str(PORT),
-                   AGROCHAIN_TOKEN_FILE=str(ROOT / "network/runtime/backend/tokens.json"), AGROCHAIN_DISABLED_SIMULATORS=disabled)
+                   AGROCHAIN_TOKEN_FILE=str(ROOT / "network/runtime/backend/tokens.json"), AGROCHAIN_DISABLED_SIMULATORS=disabled,
+                   ANOMALY_PRICE_INCREASE_THRESHOLD_PERCENT=threshold)
         if endpoint:
             env["AGROCHAIN_GATEWAY_ENDPOINT"] = endpoint
         cls.process = subprocess.Popen([str(ROOT / "network/tools/jdk-21.0.12.1+1/bin/java"), "-jar", str(ROOT / "backend/target/agrochain-backend-0.3.0.jar")], env=env, cwd=ROOT, stdout=cls.log, stderr=cls.log)
@@ -159,7 +160,8 @@ class BackendIntegration(unittest.TestCase):
             self.assertEqual(price["offeredPriceKurusPerKg"], scenario["price"])
         self.assertEqual(call("POST", f"/batches/{batch}/GetPurchase", "producer", {})[0], 400)
         invalid = create_request()
-        invalid["command"].update(batchId=batch, operationId=ident("OP"), expectedVersion=7, command="OfferDelivery", payload={"transferId": ident("TRF"), "quantityGrams": 100000})
+        version = call("GET", f"/batches/{batch}", "logistics")[1]["version"]
+        invalid["command"].update(batchId=batch, operationId=ident("OP"), expectedVersion=version, command="OfferDelivery", payload={"transferId": ident("TRF"), "quantityGrams": 100000})
         self.assertEqual(self.submit("logistics", f"/batches/{batch}/delivery-offers", invalid, 409)["code"], "INVALID_STATE_TRANSITION")
 
     def test_05_original_modified_document_and_archive_authorization(self):
