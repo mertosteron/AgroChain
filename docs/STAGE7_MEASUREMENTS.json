@@ -1,0 +1,718 @@
+{
+  "schemaVersion": "agrochain.stage7-public-measurements.v1",
+  "sourceMode": "SIMULATED",
+  "blockchainMode": "FABRIC",
+  "scope": "Local pilot; no capacity or SLA claim",
+  "environment": {
+    "utc": "2026-09-23T17:54:32.955638+00:00",
+    "os": "Linux-7.2.6-arch2-1-x86_64-with-glibc2.44",
+    "cpu": "12th Gen Intel(R) Core(TM) i7-12650H",
+    "logicalCpus": 16,
+    "memory": "32553244 kB",
+    "python": "3.14.7",
+    "versions": {
+      "docker": "29.8.1",
+      "compose": "5.5.1",
+      "go": "go version go1.27.1 linux/amd64",
+      "java": "openjdk version \"21.0.12.1\" 2026-08-18 LTS\nOpenJDK Runtime Environment Temurin-21.0.12.1+1 (build 21.0.12.1+1-LTS)\nOpenJDK 64-Bit Server VM Temurin-21.0.12.1+1 (build 21.0.12.1+1-LTS, mixed mode, sharing)",
+      "fabric": "peer:\n Version: v2.5.15\n Commit SHA: 83c7930\n Go version: go1.26.0\n OS/Arch: linux/amd64\n Chaincode:\n  Base Docker Label: org.hyperledger.fabric\n  Docker Namespace: hyperledger"
+    },
+    "sourceCommit": "60fb465287672e5e79a682d979a3ba7813b32411",
+    "workingTreeDirty": true,
+    "topology": "single host, 4 peers / MSPs, 3 Raft orderers, 4 CCAAS services, LevelDB, TLS, Retailer+Regulator endorsement",
+    "concurrency": 1,
+    "measurementState": "already running ledger, one Gateway sample and two HTTP routes warmup excluded; JIT/OS caches not flushed",
+    "limits": "local pilot observations, no throughput/load/scalability/SLA claim"
+  },
+  "failures": {
+    "gateway": 0,
+    "http": 0
+  },
+  "gatewaySummary": {
+    "submitValidMs": {
+      "n": 30,
+      "medianMs": 2022.271,
+      "p95Ms": 2042.957,
+      "minMs": 2018.167,
+      "maxMs": 2044.227
+    },
+    "sharedQueryMs": {
+      "n": 30,
+      "medianMs": 2.998,
+      "p95Ms": 3.941,
+      "minMs": 2.637,
+      "maxMs": 4.432
+    },
+    "privateQueryMs": {
+      "n": 30,
+      "medianMs": 3.34,
+      "p95Ms": 4.13,
+      "minMs": 2.671,
+      "maxMs": 6.121
+    }
+  },
+  "httpSummary": {
+    "httpCommand": {
+      "n": 42,
+      "medianMs": 2045.039,
+      "p95Ms": 2070.879,
+      "minMs": 2038.847,
+      "maxMs": 2074.508
+    },
+    "fullRoute": {
+      "n": 6,
+      "medianMs": 16523.849,
+      "p95Ms": 16592.872,
+      "minMs": 16448.516,
+      "maxMs": 16592.872
+    }
+  },
+  "gatewaySamples": [
+    {
+      "submitValidMs": 2025.101696,
+      "sharedQueryMs": 3.77555,
+      "privateQueryMs": 4.125267,
+      "endorsedTransactionBytes": 9441,
+      "sharedResponseBytes": 599,
+      "privateResponseBytes": 1168,
+      "txId": "07a77c24061608dc82bcf05bcfee713dae1f7eb3db0b14ae093b3ea843588061",
+      "blockNumber": 353
+    },
+    {
+      "submitValidMs": 2024.757008,
+      "sharedQueryMs": 4.432457,
+      "privateQueryMs": 6.120912,
+      "endorsedTransactionBytes": 9442,
+      "sharedResponseBytes": 599,
+      "privateResponseBytes": 1168,
+      "txId": "323f77e8d02154323b7eb774f4822f52101ec3e2de37c85d7518a04123605c8e",
+      "blockNumber": 354
+    },
+    {
+      "submitValidMs": 2020.133513,
+      "sharedQueryMs": 3.641186,
+      "privateQueryMs": 3.588724,
+      "endorsedTransactionBytes": 9442,
+      "sharedResponseBytes": 599,
+      "privateResponseBytes": 1168,
+      "txId": "9533d9b3ef4d03f1d94c51f88890aa8b867423302fec181f6d238f1f8a0b77c2",
+      "blockNumber": 355
+    },
+    {
+      "submitValidMs": 2022.016707,
+      "sharedQueryMs": 3.317721,
+      "privateQueryMs": 3.328681,
+      "endorsedTransactionBytes": 9442,
+      "sharedResponseBytes": 599,
+      "privateResponseBytes": 1168,
+      "txId": "a8602248e2d139669631f7dd2e11471d761bdb0811888cbd19886136c7b44b74",
+      "blockNumber": 356
+    },
+    {
+      "submitValidMs": 2021.65846,
+      "sharedQueryMs": 3.94052,
+      "privateQueryMs": 3.982119,
+      "endorsedTransactionBytes": 9442,
+      "sharedResponseBytes": 599,
+      "privateResponseBytes": 1168,
+      "txId": "1a137559bdb15d709fc3ee8d9a4b27740c04407c206e5283953ebc5770a9e4e8",
+      "blockNumber": 357
+    },
+    {
+      "submitValidMs": 2021.52597,
+      "sharedQueryMs": 2.989144,
+      "privateQueryMs": 3.962636,
+      "endorsedTransactionBytes": 9444,
+      "sharedResponseBytes": 599,
+      "privateResponseBytes": 1168,
+      "txId": "6053fb753603f78dbffd369086c02cafd9139fef49c86c964e51b6a47bcbaba8",
+      "blockNumber": 358
+    },
+    {
+      "submitValidMs": 2023.264669,
+      "sharedQueryMs": 2.991805,
+      "privateQueryMs": 3.350568,
+      "endorsedTransactionBytes": 9443,
+      "sharedResponseBytes": 599,
+      "privateResponseBytes": 1168,
+      "txId": "48d3bdb063ab350072330ea382786be73082e79adbd11ed1b1a9942294e42940",
+      "blockNumber": 359
+    },
+    {
+      "submitValidMs": 2044.227283,
+      "sharedQueryMs": 2.841152,
+      "privateQueryMs": 3.013364,
+      "endorsedTransactionBytes": 9443,
+      "sharedResponseBytes": 599,
+      "privateResponseBytes": 1168,
+      "txId": "48cedaebf70f636b07182e6ebaa8e874aedc76c5fa3efaeb29accd045fa981ae",
+      "blockNumber": 360
+    },
+    {
+      "submitValidMs": 2022.575116,
+      "sharedQueryMs": 3.00325,
+      "privateQueryMs": 3.194835,
+      "endorsedTransactionBytes": 9444,
+      "sharedResponseBytes": 599,
+      "privateResponseBytes": 1168,
+      "txId": "c3382b2e9b561537e620bb801d01997c4d9db5dc40758b511dc1048d61d43d52",
+      "blockNumber": 361
+    },
+    {
+      "submitValidMs": 2024.128372,
+      "sharedQueryMs": 3.089696,
+      "privateQueryMs": 3.151281,
+      "endorsedTransactionBytes": 9443,
+      "sharedResponseBytes": 599,
+      "privateResponseBytes": 1168,
+      "txId": "4fb4ed342cb2d84fb444dce947334c0d9b1caecba3c8b77d26ff58f0cf0f077b",
+      "blockNumber": 362
+    },
+    {
+      "submitValidMs": 2023.684519,
+      "sharedQueryMs": 2.729661,
+      "privateQueryMs": 3.462707,
+      "endorsedTransactionBytes": 9443,
+      "sharedResponseBytes": 599,
+      "privateResponseBytes": 1168,
+      "txId": "61b2851ef1faf8ca60500244528b5d9b47ac1467698621396098a81bef835a86",
+      "blockNumber": 363
+    },
+    {
+      "submitValidMs": 2022.881904,
+      "sharedQueryMs": 2.977108,
+      "privateQueryMs": 3.106503,
+      "endorsedTransactionBytes": 9444,
+      "sharedResponseBytes": 599,
+      "privateResponseBytes": 1168,
+      "txId": "0711ab756bc174466cb0fc355046839cc51b9ce9c7404d6cd8190ae7415d5550",
+      "blockNumber": 364
+    },
+    {
+      "submitValidMs": 2042.957115,
+      "sharedQueryMs": 3.164178,
+      "privateQueryMs": 3.270958,
+      "endorsedTransactionBytes": 9443,
+      "sharedResponseBytes": 599,
+      "privateResponseBytes": 1168,
+      "txId": "82906c553df964c935cefe76437ec291c55b922a5640a27f126f7dfb21ea1d50",
+      "blockNumber": 365
+    },
+    {
+      "submitValidMs": 2023.45907,
+      "sharedQueryMs": 3.235202,
+      "privateQueryMs": 3.922592,
+      "endorsedTransactionBytes": 9443,
+      "sharedResponseBytes": 599,
+      "privateResponseBytes": 1168,
+      "txId": "b38ecc798d66e4bc2ad2e8523d4b90949a20d4570f04ea863c842aca81bf2625",
+      "blockNumber": 366
+    },
+    {
+      "submitValidMs": 2020.943704,
+      "sharedQueryMs": 3.506633,
+      "privateQueryMs": 3.610433,
+      "endorsedTransactionBytes": 9443,
+      "sharedResponseBytes": 599,
+      "privateResponseBytes": 1168,
+      "txId": "7d04c6f079227af940dfea4c4ee5fb6f9cdfecde1e681c0e9956d0a03eeb5e23",
+      "blockNumber": 367
+    },
+    {
+      "submitValidMs": 2021.571727,
+      "sharedQueryMs": 2.91839,
+      "privateQueryMs": 3.157504,
+      "endorsedTransactionBytes": 9443,
+      "sharedResponseBytes": 599,
+      "privateResponseBytes": 1168,
+      "txId": "4aff88afa7227a8d2ee67498c732a545fa8e609aa184df094391966e3d4a2b66",
+      "blockNumber": 368
+    },
+    {
+      "submitValidMs": 2020.54954,
+      "sharedQueryMs": 2.698085,
+      "privateQueryMs": 3.177788,
+      "endorsedTransactionBytes": 9443,
+      "sharedResponseBytes": 599,
+      "privateResponseBytes": 1168,
+      "txId": "bc1ad58787055a1d067a674fba9fd02db9335cbf021500632d8b9d7c41058821",
+      "blockNumber": 369
+    },
+    {
+      "submitValidMs": 2020.927237,
+      "sharedQueryMs": 3.055315,
+      "privateQueryMs": 3.909747,
+      "endorsedTransactionBytes": 9442,
+      "sharedResponseBytes": 599,
+      "privateResponseBytes": 1168,
+      "txId": "74b68d8fa53d967672501b20720964db8222e82794bb912599cf2e38795cd2c0",
+      "blockNumber": 370
+    },
+    {
+      "submitValidMs": 2023.258091,
+      "sharedQueryMs": 2.842753,
+      "privateQueryMs": 3.467432,
+      "endorsedTransactionBytes": 9442,
+      "sharedResponseBytes": 599,
+      "privateResponseBytes": 1168,
+      "txId": "de9b07f57a117e0b85207a61c3ec9d49d37f168e6299dd4137c235186330c265",
+      "blockNumber": 371
+    },
+    {
+      "submitValidMs": 2018.379916,
+      "sharedQueryMs": 3.237074,
+      "privateQueryMs": 2.951835,
+      "endorsedTransactionBytes": 9432,
+      "sharedResponseBytes": 597,
+      "privateResponseBytes": 1168,
+      "txId": "f07862408c434c95c9f14dd6ed5d87bb99a52829e64d40efe5417effa1da4988",
+      "blockNumber": 372
+    },
+    {
+      "submitValidMs": 2024.175604,
+      "sharedQueryMs": 2.834173,
+      "privateQueryMs": 3.681175,
+      "endorsedTransactionBytes": 9437,
+      "sharedResponseBytes": 598,
+      "privateResponseBytes": 1168,
+      "txId": "c800060036c4d72612f6b0618da7009408e1e43225d6d12e4bb65ddb0dce3121",
+      "blockNumber": 373
+    },
+    {
+      "submitValidMs": 2022.617717,
+      "sharedQueryMs": 2.637011,
+      "privateQueryMs": 2.823223,
+      "endorsedTransactionBytes": 9437,
+      "sharedResponseBytes": 598,
+      "privateResponseBytes": 1168,
+      "txId": "01b806c171accbdb2b9a9658dfcb0a80036124002acc4d7be27e96bfe45cc5c1",
+      "blockNumber": 374
+    },
+    {
+      "submitValidMs": 2023.400551,
+      "sharedQueryMs": 3.176721,
+      "privateQueryMs": 3.382677,
+      "endorsedTransactionBytes": 9442,
+      "sharedResponseBytes": 599,
+      "privateResponseBytes": 1168,
+      "txId": "dc564457abe45f64c6455ec073ab0d4f7a0193e60b99d046e17aabe669b3215d",
+      "blockNumber": 375
+    },
+    {
+      "submitValidMs": 2019.839231,
+      "sharedQueryMs": 3.048161,
+      "privateQueryMs": 3.155546,
+      "endorsedTransactionBytes": 9441,
+      "sharedResponseBytes": 599,
+      "privateResponseBytes": 1168,
+      "txId": "e87429db628f591e9cff193014f404f1ae17ecd7af5fbcf20d41cd3d4d2d79f0",
+      "blockNumber": 376
+    },
+    {
+      "submitValidMs": 2021.645641,
+      "sharedQueryMs": 2.825926,
+      "privateQueryMs": 3.100875,
+      "endorsedTransactionBytes": 9443,
+      "sharedResponseBytes": 599,
+      "privateResponseBytes": 1168,
+      "txId": "69ff87c29760683ab73339d43eaf044d1a1aa730bedebd9f445a69686537f3f1",
+      "blockNumber": 377
+    },
+    {
+      "submitValidMs": 2020.793421,
+      "sharedQueryMs": 2.692853,
+      "privateQueryMs": 2.670781,
+      "endorsedTransactionBytes": 9443,
+      "sharedResponseBytes": 599,
+      "privateResponseBytes": 1168,
+      "txId": "22df48f02d6e0f6339e6e1aa5dd8e4dc21a33281cc83256d5979f96726698155",
+      "blockNumber": 378
+    },
+    {
+      "submitValidMs": 2018.166606,
+      "sharedQueryMs": 3.181693,
+      "privateQueryMs": 3.361955,
+      "endorsedTransactionBytes": 9443,
+      "sharedResponseBytes": 599,
+      "privateResponseBytes": 1168,
+      "txId": "508883ca4fa9eaf8609203306cd9355fffc007e2a180eae39f5b85f5740b21e3",
+      "blockNumber": 379
+    },
+    {
+      "submitValidMs": 2020.654398,
+      "sharedQueryMs": 2.873415,
+      "privateQueryMs": 4.130056,
+      "endorsedTransactionBytes": 9443,
+      "sharedResponseBytes": 599,
+      "privateResponseBytes": 1168,
+      "txId": "a680a4afeeabebe6f24a80a2c7a031b475a754c514a9581f412acfa180270874",
+      "blockNumber": 380
+    },
+    {
+      "submitValidMs": 2020.170346,
+      "sharedQueryMs": 2.903495,
+      "privateQueryMs": 3.140606,
+      "endorsedTransactionBytes": 9443,
+      "sharedResponseBytes": 599,
+      "privateResponseBytes": 1168,
+      "txId": "ee8aae147caa456df94be585adf0e942185037043ccfada6f2ecdbdb6799cea1",
+      "blockNumber": 381
+    },
+    {
+      "submitValidMs": 2022.525888,
+      "sharedQueryMs": 2.769259,
+      "privateQueryMs": 3.251012,
+      "endorsedTransactionBytes": 9444,
+      "sharedResponseBytes": 599,
+      "privateResponseBytes": 1168,
+      "txId": "81ad8ca60b114afa6c8ba26db060e218ca990d8e10159750a5cd9e8e58ea79f9",
+      "blockNumber": 382
+    }
+  ],
+  "httpCommands": [
+    {
+      "command": "CreateBatch",
+      "ms": 2048.662579,
+      "requestBytes": 433,
+      "status": "COMMITTED",
+      "txId": "3f8e0f23a2b3658ea174c0021d61ea5dc0f637e21a7734e9c269c09e0df45383"
+    },
+    {
+      "command": "OfferPickup",
+      "ms": 2071.961177,
+      "requestBytes": 322,
+      "status": "COMMITTED",
+      "txId": "1959f665c4b7061ecdc25196c14e5a3cfa5d4eaf3877f43082445e6024fc0cc0"
+    },
+    {
+      "command": "AcceptPickup",
+      "ms": 2039.282363,
+      "requestBytes": 323,
+      "status": "COMMITTED",
+      "txId": "44d1b0be2d2c501823fd78d348c54f7c46c002db88f2131a095ec755589ece5b"
+    },
+    {
+      "command": "RecordFreightCost",
+      "ms": 2058.176303,
+      "requestBytes": 301,
+      "status": "COMMITTED",
+      "txId": "8d78d74375046053e4fd3b285f8f2425461e8f55ccd38c5cbe09e5f0c0dac81d"
+    },
+    {
+      "command": "OfferDelivery",
+      "ms": 2042.442776,
+      "requestBytes": 324,
+      "status": "COMMITTED",
+      "txId": "6766cdb4228359665d90329f0798fde0b3e274e2f1734fa585026744ae95a721"
+    },
+    {
+      "command": "AcceptDelivery",
+      "ms": 2039.325142,
+      "requestBytes": 325,
+      "status": "COMMITTED",
+      "txId": "17a1c977fa70a80eb8eaaf825f5b1b729a7a644670aa535bf4b37f18655f5e7f"
+    },
+    {
+      "command": "ReportRetailPrice",
+      "ms": 2047.211495,
+      "requestBytes": 495,
+      "status": "COMMITTED",
+      "txId": "a87d36e8974312ebaea7a1188c61371d0c7171475d906320616e3abe236dacc3"
+    },
+    {
+      "command": "CreateBatch",
+      "ms": 2051.981093,
+      "requestBytes": 437,
+      "status": "COMMITTED",
+      "txId": "2a7c9f42c10a4e128f1493f5480cb25da827b77a74173da60cc2819e57bc440f"
+    },
+    {
+      "command": "OfferPickup",
+      "ms": 2070.719351,
+      "requestBytes": 326,
+      "status": "COMMITTED",
+      "txId": "55c1a9ee7fc04051481b9bb36d24f888461a696b581eb4730c23e7412982e9ad"
+    },
+    {
+      "command": "AcceptPickup",
+      "ms": 2042.454601,
+      "requestBytes": 327,
+      "status": "COMMITTED",
+      "txId": "dba9a61783e87127dc05df18a2d9b1578cf1f1bbdf6c5d650280620de747a7a2"
+    },
+    {
+      "command": "RecordFreightCost",
+      "ms": 2056.380016,
+      "requestBytes": 305,
+      "status": "COMMITTED",
+      "txId": "4ce636c1754e6b715a8b3e48424a9f4f5e8eb5d0c772ec7fc9189a78318170de"
+    },
+    {
+      "command": "OfferDelivery",
+      "ms": 2042.702956,
+      "requestBytes": 328,
+      "status": "COMMITTED",
+      "txId": "23050b00259504ab6e0fa56fe33ecb8746c010e68110e0436f1594c9ad1d5b2f"
+    },
+    {
+      "command": "AcceptDelivery",
+      "ms": 2042.930324,
+      "requestBytes": 329,
+      "status": "COMMITTED",
+      "txId": "d1fc95e3c541833baffa23259e562f01225db512de47ecc3d9989c3f0ffd51ce"
+    },
+    {
+      "command": "ReportRetailPrice",
+      "ms": 2047.017111,
+      "requestBytes": 499,
+      "status": "COMMITTED",
+      "txId": "153410487306f64d3c29604aec9e83266b4e5134a5c5e3a387d0e39dcb807cf2"
+    },
+    {
+      "command": "CreateBatch",
+      "ms": 2045.166521,
+      "requestBytes": 433,
+      "status": "COMMITTED",
+      "txId": "ad66e9c09d2cd053f664b1357442259ecd9ee279780d6d466f992d209fc4acbe"
+    },
+    {
+      "command": "OfferPickup",
+      "ms": 2070.879184,
+      "requestBytes": 322,
+      "status": "COMMITTED",
+      "txId": "640caf15ed96f9bbb01c7aeeed996546c5e1bc8db8381efa9623873971fa6b96"
+    },
+    {
+      "command": "AcceptPickup",
+      "ms": 2045.200238,
+      "requestBytes": 323,
+      "status": "COMMITTED",
+      "txId": "26e18aed3092b919c70ed2d772fe0596b9bfadb0be5ed66cbc5bbc10d69a7f5b"
+    },
+    {
+      "command": "RecordFreightCost",
+      "ms": 2057.097459,
+      "requestBytes": 301,
+      "status": "COMMITTED",
+      "txId": "e13b83c8f3736f4fdc6a84fc87e9ed2896d9d3a984227cfd285679d234def0b8"
+    },
+    {
+      "command": "OfferDelivery",
+      "ms": 2041.886134,
+      "requestBytes": 324,
+      "status": "COMMITTED",
+      "txId": "46c1ee2196f1393398fcfae1565c25aac3007cc423c59f24d4b931cd8d3f6f6b"
+    },
+    {
+      "command": "AcceptDelivery",
+      "ms": 2042.728285,
+      "requestBytes": 325,
+      "status": "COMMITTED",
+      "txId": "7dc7de629b92b175396b1ff64541991dfcc520aabe60f2fac060fe205034c606"
+    },
+    {
+      "command": "ReportRetailPrice",
+      "ms": 2047.714675,
+      "requestBytes": 495,
+      "status": "COMMITTED",
+      "txId": "a005d55bc6ff7ace1504d4a35e1feedb76162d9db02aea2b43e8e00733b62aae"
+    },
+    {
+      "command": "CreateBatch",
+      "ms": 2045.58001,
+      "requestBytes": 437,
+      "status": "COMMITTED",
+      "txId": "07d7f136a4b8ab551e06585712dd26e2ec9fc286301310feab1d710e15db6e8a"
+    },
+    {
+      "command": "OfferPickup",
+      "ms": 2063.852737,
+      "requestBytes": 326,
+      "status": "COMMITTED",
+      "txId": "70ee5cba43c37851a398c7144536bc43b49a24cfa51cdb227d618c84dc332cf9"
+    },
+    {
+      "command": "AcceptPickup",
+      "ms": 2044.910706,
+      "requestBytes": 327,
+      "status": "COMMITTED",
+      "txId": "df192ffef4e88ef8bb2489ca2a0145246cbe4fb6d1686fcb8d2a86fd2a088482"
+    },
+    {
+      "command": "RecordFreightCost",
+      "ms": 2054.530772,
+      "requestBytes": 305,
+      "status": "COMMITTED",
+      "txId": "e29dfa6e965802949b0c8ab6ec7fbb3c62d251919637606dd678738b440cc602"
+    },
+    {
+      "command": "OfferDelivery",
+      "ms": 2041.514106,
+      "requestBytes": 328,
+      "status": "COMMITTED",
+      "txId": "9e1f35bd5041cd4e5d85af26be10c8c54d97aa9aa491034adc3e30fd69b2563d"
+    },
+    {
+      "command": "AcceptDelivery",
+      "ms": 2040.925924,
+      "requestBytes": 329,
+      "status": "COMMITTED",
+      "txId": "684194cecd14cdaff590d1f0bd8f63b434de6e4650a31a9bc12c3c719965b978"
+    },
+    {
+      "command": "ReportRetailPrice",
+      "ms": 2043.434075,
+      "requestBytes": 499,
+      "status": "COMMITTED",
+      "txId": "989af44572e7e489e6ca3db0417b964303b18a12f3bb5d6d54f20e70c673e82b"
+    },
+    {
+      "command": "CreateBatch",
+      "ms": 2043.642967,
+      "requestBytes": 433,
+      "status": "COMMITTED",
+      "txId": "20befa30e54a383ee28b0c6c7f5fd34126b2864847eba167ea4f8aac88c83b52"
+    },
+    {
+      "command": "OfferPickup",
+      "ms": 2066.222061,
+      "requestBytes": 322,
+      "status": "COMMITTED",
+      "txId": "ec3bac6aa65603190b24dba043ae6098a9ea2cf4175d6a31107d72789367993b"
+    },
+    {
+      "command": "AcceptPickup",
+      "ms": 2040.914784,
+      "requestBytes": 323,
+      "status": "COMMITTED",
+      "txId": "4d31d74c689ee420a664049ce355ce1d72d820ca4b8eb7843e871e610bd26380"
+    },
+    {
+      "command": "RecordFreightCost",
+      "ms": 2052.927394,
+      "requestBytes": 301,
+      "status": "COMMITTED",
+      "txId": "3b2d5353c3ff62ea2b1024b8acf483a91e9e5709f7fbf13faffa254b9844483f"
+    },
+    {
+      "command": "OfferDelivery",
+      "ms": 2042.573064,
+      "requestBytes": 324,
+      "status": "COMMITTED",
+      "txId": "999d833112746e60da973267a605ed5b71f561470f487ea59d2b164bfaf61283"
+    },
+    {
+      "command": "AcceptDelivery",
+      "ms": 2038.846544,
+      "requestBytes": 325,
+      "status": "COMMITTED",
+      "txId": "b8e4719fcb639152256c57ee53522159ba9dc303cc4592b90be9bc0635f6b84d"
+    },
+    {
+      "command": "ReportRetailPrice",
+      "ms": 2043.970872,
+      "requestBytes": 495,
+      "status": "COMMITTED",
+      "txId": "ac69d2d676d70a1f0de54d2cc8c146641b1e2415bc781d9c730676833464c4bd"
+    },
+    {
+      "command": "CreateBatch",
+      "ms": 2043.762768,
+      "requestBytes": 437,
+      "status": "COMMITTED",
+      "txId": "e01bd1e8e4af7d28b475653ecd8463647e37d615188c513a44d165979d6ff609"
+    },
+    {
+      "command": "OfferPickup",
+      "ms": 2074.508258,
+      "requestBytes": 326,
+      "status": "COMMITTED",
+      "txId": "559b80a9eef3e886c108c214d1b2bd2195327e7ce0663b60ac0ae74b8b5f3cb9"
+    },
+    {
+      "command": "AcceptPickup",
+      "ms": 2039.675956,
+      "requestBytes": 327,
+      "status": "COMMITTED",
+      "txId": "a1845a8f6028b4722074a59a35500e75fd146c00e6623ce789d7f52d26acfe14"
+    },
+    {
+      "command": "RecordFreightCost",
+      "ms": 2049.247436,
+      "requestBytes": 305,
+      "status": "COMMITTED",
+      "txId": "59e1a91ef105f280169a655cee1d55423b8562199f44683795f145d43ae4c54a"
+    },
+    {
+      "command": "OfferDelivery",
+      "ms": 2039.525848,
+      "requestBytes": 328,
+      "status": "COMMITTED",
+      "txId": "447a1a65b5d64f5548ccbbda1f57d8e47fd987fc5d6fd3151b444f2b45c7170c"
+    },
+    {
+      "command": "AcceptDelivery",
+      "ms": 2041.065392,
+      "requestBytes": 329,
+      "status": "COMMITTED",
+      "txId": "59a38916f93acb710a23eeef770bd1cd5f659ce4de1e76fdffaef6a97a70cf86"
+    },
+    {
+      "command": "ReportRetailPrice",
+      "ms": 2047.70782,
+      "requestBytes": 499,
+      "status": "COMMITTED",
+      "txId": "eea965ae17ff4d2ef279896a50552f528e0085becf40569ec2ea95ab89fbf859"
+    }
+  ],
+  "httpRoutes": [
+    {
+      "scenario": "NORMAL",
+      "ms": 16592.871834,
+      "classification": "NO_SIGNAL",
+      "increaseBps": 4000,
+      "batchId": "BAT-88FE55D94D931F5AC1042961D2B37216",
+      "analysisTxId": "e295bb829f0a4e5b65d9bf3b1a8d08722359bddcbfbc493c9984203fcdd57392"
+    },
+    {
+      "scenario": "SUSPICIOUS",
+      "ms": 16488.271337,
+      "classification": "REVIEW_REQUIRED",
+      "increaseBps": 8500,
+      "batchId": "BAT-217A30B88884129A2C08751C05214A92",
+      "analysisTxId": "d5ba44a174179dff7c92489143091e01f9c7c9cb724ee569cbf416e4a8f09f45"
+    },
+    {
+      "scenario": "NORMAL",
+      "ms": 16581.160629,
+      "classification": "NO_SIGNAL",
+      "increaseBps": 4000,
+      "batchId": "BAT-086523965569F4E6D4564D0909DF7620",
+      "analysisTxId": "115ea7ce318261f236951347af84bf82090d7c1b4ae2f65e1b1654340befd356"
+    },
+    {
+      "scenario": "SUSPICIOUS",
+      "ms": 16449.92315,
+      "classification": "REVIEW_REQUIRED",
+      "increaseBps": 8500,
+      "batchId": "BAT-A2885DB3610F7994887192D78CB13DE6",
+      "analysisTxId": "dd1940a5ec400f2d5ca61fa9f33844f9cb210dd0375183ba37fb0d1a01e9d85d"
+    },
+    {
+      "scenario": "NORMAL",
+      "ms": 16448.516059,
+      "classification": "NO_SIGNAL",
+      "increaseBps": 4000,
+      "batchId": "BAT-D87A0EDE0B510EDEDA32542128352B79",
+      "analysisTxId": "9406a31ab602e259ac43c72c99c935ead162be69868eae97a61366d606749d06"
+    },
+    {
+      "scenario": "SUSPICIOUS",
+      "ms": 16559.426308,
+      "classification": "REVIEW_REQUIRED",
+      "increaseBps": 8500,
+      "batchId": "BAT-6E61E32CA4886B91E7AEF206259B6D41",
+      "analysisTxId": "2bc970f49347bda6095d6cd15068fc2f8b3a27ec9c032fb8298d6b9505a91144"
+    }
+  ]
+}
