@@ -12,7 +12,7 @@ public final class Projection {
     public synchronized void accept(Ledger.Event event) {
         if(store.seen(event.txId()))return;
         JsonNode e=event.body();String batch=Json.id(Json.text(e,"batchId"),"BAT");String type=Json.text(e,"eventType");
-        if(!Set.of("BatchCreated","PickupOffered","PickupAccepted","FreightCostRecorded","DeliveryOffered","DeliveryAccepted","RetailPriceReported").contains(type))throw ApiError.of("INVALID_SCHEMA");
+        if(!Set.of("BatchCreated","PickupOffered","PickupAccepted","FreightCostRecorded","DeliveryOffered","DeliveryAccepted","RetailPriceReported","PriceEvaluated","ReviewUpdated").contains(type))throw ApiError.of("INVALID_SCHEMA");
         var existing=store.row("SELECT body FROM projections WHERE batch=?",batch);
         ObjectNode body;
         if(existing==null){
