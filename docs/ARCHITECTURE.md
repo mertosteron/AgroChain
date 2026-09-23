@@ -1,6 +1,6 @@
 # AgroChain — architecture contract
 
-Status: Stages 1–6 implemented. The normative companions are [product scope](PRODUCT_SCOPE.md), [data contracts](DATA_CONTRACTS.md), [security](SECURITY_AND_PRIVACY.md) and [state machines](STATE_MACHINE.md). Stage 6 runtime behavior is described in [the UI guide](STAGE6_UI.md).
+Status: Stages 1–7 implemented and locally verified. The normative companions are [product scope](PRODUCT_SCOPE.md), [data contracts](DATA_CONTRACTS.md), [security](SECURITY_AND_PRIVACY.md) and [state machines](STATE_MACHINE.md). Stage 6 runtime behavior is described in [the UI guide](STAGE6_UI.md). Stage 7 [results and measurements](STAGE7_REPORT.md) document the pilot evidence without changing domain semantics.
 
 ## Stage 6 implementation (2026-09-23)
 
