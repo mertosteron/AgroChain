@@ -8,7 +8,22 @@ Stage 4 enables verified business writes with signed source evidence, mandatory
 certificate roles and three Private Data Collections.
 Stage 5 adds the Spring Boot API, Java Fabric Gateway, signed institutional
 simulators, durable operation recovery and a consumer-safe public read model.
-Government integrations, anomaly engine and UI do not exist yet.
+Stage 6 adds deterministic price analysis attested by chaincode, private review
+actions, Turkish actor/inspector screens and a consumer lot QR page. Institutional
+data remains simulated; no real government integration is claimed.
+
+Stage 6 operation and acceptance commands are in [the UI guide](docs/STAGE6_UI.md).
+Start `make backend-run` and open `http://localhost:8080`. Existing 0.2.1 networks
+need an explicit chaincode upgrade; keep the ledger and source keys:
+
+```bash
+make network-up
+make chaincode-upgrade CHAINCODE_VERSION=0.3.0 CHAINCODE_SEQUENCE=6
+make stage6-check
+```
+
+Sequence 6 is this development network's next sequence; on another existing
+network select its actual next sequence. A fresh channel uses sequence 1.
 
 Backend setup, API payloads, credentials and limits are in the
 [backend guide](backend/README.md); executed acceptance is in the
