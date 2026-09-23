@@ -13,7 +13,7 @@ import java.util.function.Consumer;
 
 /** No generic submit endpoint: private read functions cannot be ordered by this backend. */
 public final class FabricLedger implements Ledger {
-    private static final Set<String> READS=Set.of("Health","GetConfiguration","GetBatch","BatchExists","GetBatchHistory","GetTransfer","GetOperation","GetDocument","GetPurchase","GetFreightCost","GetRetailReport");
+    private static final Set<String> READS=Set.of("Health","GetConfiguration","GetBatch","BatchExists","GetBatchHistory","GetTransfer","GetOperation","GetDocument","GetPurchase","GetFreightCost","GetRetailReport","GetAnomaly","GetReviewHistory");
     private final Settings settings;
     private final Map<Actor,Gateway> gateways=new HashMap<>();
     private final ManagedChannel channel;
