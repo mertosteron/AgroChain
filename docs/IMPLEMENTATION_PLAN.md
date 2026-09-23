@@ -1,6 +1,6 @@
 # AgroChain — staged implementation plan
 
-Status: Stage 6 implementation and verification are documented in [Stage 6 report](STAGE6_REPORT.md). Earlier dependency discussions are historical. Stage 7 measurement and final Stage 8 packaging remain deferred. One stage at a time.
+Status: Stages 1–8 are implemented and locally verified. The [Stage 7 report](STAGE7_REPORT.md) records tests and measurements; the [Stage 8 report](STAGE8_REPORT.md) records the final package, fresh-workspace installation and fixed demo replay. Physical validation on a second computer remains a documented limitation. Earlier dependency discussions are historical. One stage at a time.
 
 ## Stage 1 gate
 
