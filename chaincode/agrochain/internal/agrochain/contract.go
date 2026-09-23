@@ -54,7 +54,7 @@ func (*Contract) Invoke(stub shim.ChaincodeStubInterface) *peer.Response {
 
 func isMutation(fn string) bool {
 	switch fn {
-	case "CreateBatch", "OfferPickup", "AcceptPickup", "RecordFreightCost", "OfferDelivery", "AcceptDelivery", "ReportRetailPrice":
+	case "CreateBatch", "OfferPickup", "AcceptPickup", "RecordFreightCost", "OfferDelivery", "AcceptDelivery", "ReportRetailPrice", "EvaluatePrice", "OpenReview", "ResolveReview":
 		return true
 	}
 	return false
@@ -104,7 +104,7 @@ func dispatch(s ledger, msp, role, fn string, args []string, request ...proposal
 			return nil, fail("DOCUMENT_NOT_FOUND")
 		}
 		return env, nil
-	case "GetPurchase", "GetFreightCost", "GetRetailReport", "VerifyDocument":
+	case "GetPurchase", "GetFreightCost", "GetRetailReport", "GetAnomaly", "GetReviewHistory", "VerifyDocument":
 		ps, ok := s.(privateLedger)
 		if !ok || len(args) != 1 || len(request) != 1 {
 			return nil, fail("INVALID_SCHEMA")
@@ -116,7 +116,7 @@ func dispatch(s ledger, msp, role, fn string, args []string, request ...proposal
 			return nil, fail("INVALID_SCHEMA")
 		}
 		return privateQuery(ps, msp, role, fn, args[0], nil)
-	case "CreateBatch", "OfferPickup", "AcceptPickup", "RecordFreightCost", "OfferDelivery", "AcceptDelivery", "ReportRetailPrice":
+	case "CreateBatch", "OfferPickup", "AcceptPickup", "RecordFreightCost", "OfferDelivery", "AcceptDelivery", "ReportRetailPrice", "EvaluatePrice", "OpenReview", "ResolveReview":
 		if len(args) != 1 {
 			return nil, fail("INVALID_SCHEMA")
 		}
