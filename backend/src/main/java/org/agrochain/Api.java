@@ -21,11 +21,24 @@ public final class Api {
         catch(java.io.IOException e){throw ApiError.of("INVALID_SCHEMA");}
     }
     @GetMapping("/health") public Object health(){return Map.of("status","UP","sourceMode","SIMULATED","blockchainMode","FABRIC","projectionAsOfBlock",Long.toString(store.checkpoint()));}
+    @GetMapping("/session") public Object session(HttpServletRequest req){return actor(req);}
+    @GetMapping("/batches") public Object batches(HttpServletRequest req){
+        return store.rows("SELECT batch FROM projections ORDER BY batch").stream().map(r->ledger.query(actor(req),"GetBatch",(String)r.get("batch"))).toList();
+    }
+    @GetMapping("/batches/{id}/anomaly") public JsonNode anomaly(@PathVariable String id,HttpServletRequest req){return ledger.query(actor(req),"GetAnomaly",Json.id(id,"BAT"));}
+    @GetMapping("/batches/{id}/reviews") public JsonNode reviews(@PathVariable String id,HttpServletRequest req){return ledger.query(actor(req),"GetReviewHistory",Json.id(id,"BAT"));}
+    @PostMapping("/anomalies/{id}/review-actions") public ResponseEntity<JsonNode> review(@PathVariable String id,HttpServletRequest req){
+        JsonNode input=body(req), c=input.path("command");Json.id(id,"ANM");
+        if(!id.equals(c.path("payload").path("anomalyId").asText()) || !Set.of("OpenReview","ResolveReview").contains(c.path("command").asText()))throw ApiError.of("INVALID_SCHEMA");
+        var result=workflow.submit(actor(req),Json.text(c,"command"),Json.text(c,"batchId"),req.getHeader("Idempotency-Key"),input);
+        return ResponseEntity.status(result.http()).body(result.body());
+    }
     @PostMapping("/batches") public ResponseEntity<JsonNode> create(HttpServletRequest req){return mutate(req,"CreateBatch",null);}
     @PostMapping("/batches/{id}/{action}") public ResponseEntity<JsonNode> command(@PathVariable String id,@PathVariable String action,HttpServletRequest req){
         Json.id(id,"BAT");String fn=switch(action){
             case "pickup-offers"->"OfferPickup";case "pickup-acceptances"->"AcceptPickup";case "freight-costs"->"RecordFreightCost";
             case "delivery-offers"->"OfferDelivery";case "delivery-acceptances"->"AcceptDelivery";case "retail-reports"->"ReportRetailPrice";
+            case "anomaly-evaluations"->"EvaluatePrice";
             default->throw ApiError.of("UNSUPPORTED_PILOT_OPERATION");};
         return mutate(req,fn,id);
     }
