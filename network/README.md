@@ -6,6 +6,13 @@ describes build/deploy/test/upgrade commands. `make network-down` stops these fi
 `make network-up` restores them when generated service configuration exists.
 No Stage 2 ledger volume or identity is replaced.
 
+Stage 7 adds an opt-in isolated ledger prefix for clean acceptance runs;
+`AGROCHAIN_LEDGER_VOLUME_PREFIX=agrochain-stage7-<12 lowercase hex>` names seven
+disposable test volumes. It is bound to the generated identity manifest. The
+default remains `agrochain`; do not change a populated workspace's prefix.
+Use the managed [Stage 7 runner](../docs/STAGE7_TESTING.md) to preserve the existing
+network, test fresh workspaces sequentially and restore it afterward.
+
 `make verify` retains topology, TLS, MSP/channel, lifecycle-query and peer-restart
 checks while allowing deployed chaincode. To assert the original Stage 2 empty
 chaincode condition on an undeployed network, use `AGROCHAIN_VERIFY_EMPTY=1 make verify`.
@@ -15,12 +22,13 @@ for Python cryptography/JDK requirements; network health alone proves no busines
 
 Linux x86-64 competition pilot: four application organizations, one peer and anchor
 each, `agrochannel`, and three TLS-enabled Raft orderers in a separate `OrdererMSP`.
-Stage 4 business chaincode is deployed; backend, simulator services and UI remain future work.
+Stage 4 business chaincode is deployed; Stages 5–8 add backend, institutional
+simulators, UI and the [final competition package](../docs/competition/README.md).
 See [Stage 2 evidence](../docs/STAGE2_REPORT.md) for executed checks and limitations.
 
 ```mermaid
 flowchart TB
-  GW[Future Stage 5 Fabric Gateway clients] -. TLS and caller identity .-> P
+  GW[Spring Boot / Fabric Gateway clients] -. TLS and caller identity .-> P
   GW -. TLS and caller identity .-> L
   GW -. TLS and caller identity .-> R
   GW -. TLS and caller identity .-> A
