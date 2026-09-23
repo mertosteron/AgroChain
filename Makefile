@@ -72,3 +72,10 @@ backend-integration:
 backend-gateway-test:
 	AGROCHAIN_ROOT="$(ROOT)" AGROCHAIN_LIVE_TESTS=true bash "$(ROOT)backend/mvnw" -Dtest=GatewayRecoveryTest test
 stage5-check: backend-build chaincode-check backend-integration backend-gateway-test
+
+.PHONY: stage6-integration stage6-check stage6-ui-test
+stage6-integration:
+	python3 "$(ROOT)backend/test/stage6_test.py"
+stage6-check: backend-build chaincode-test chaincode-check stage6-integration backend-gateway-test
+stage6-ui-test:
+	node "$(ROOT)backend/test/ui_test.cjs"
