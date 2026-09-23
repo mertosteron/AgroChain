@@ -3,7 +3,7 @@ package agrochain
 import "encoding/json"
 
 // Set only at build time by the reproducible release script, never at endorsement.
-var ReleaseVersion = "0.2.1"
+var ReleaseVersion = "0.3.0"
 
 type pageInput struct {
 	SchemaVersion string `json:"schemaVersion"`
