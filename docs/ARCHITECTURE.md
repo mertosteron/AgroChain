@@ -1,6 +1,24 @@
 # AgroChain — architecture contract
 
-Status: Stage 1 domain contract with Stage 2 topology and Stage 4 privacy implementation. Verified lifecycle writes, mandatory certificate roles, signed evidence and real PDC access are implemented. See [Stage 4 evidence](STAGE4_REPORT.md) and [runtime APIs](STAGE4_PRIVACY.md). Backend, simulator services and UI remain future stages. [Product scope](PRODUCT_SCOPE.md), [data contracts](DATA_CONTRACTS.md), [security](SECURITY_AND_PRIVACY.md) and [state machines](STATE_MACHINE.md) remain normative companions.
+Status: Stages 1–6 implemented. The normative companions are [product scope](PRODUCT_SCOPE.md), [data contracts](DATA_CONTRACTS.md), [security](SECURITY_AND_PRIVACY.md) and [state machines](STATE_MACHINE.md). Stage 6 runtime behavior is described in [the UI guide](STAGE6_UI.md).
+
+## Stage 6 implementation (2026-09-23)
+
+Spring Boot serves a small same-origin HTML/CSS/JavaScript UI without a second
+application framework. A restart-safe reconciliation worker finds unevaluated
+retail reports from the replayable valid-event projection. The Regulator oracle
+computes an exact integer score, journals its operation and submits EvaluatePrice.
+Both endorsers rederive the score from committed PDC inputs and immutable ledger
+policy. Review actions require the Regulator reviewer certificate role.
+Evaluation and review increment the batch version and append receipts without
+changing RETAIL_REPORTED. Public events contain opaque IDs only. All scoring,
+classification, review text and fresh salts stay in retailAuditPrivate.
+
+The UI uses manually provisioned local bearer credentials, kept in page memory;
+tokens are never embedded in HTML, URLs or browser storage. Consumer pages call
+only the explicit public projection. QR generation is local, with no external QR
+service. The threshold environment setting must exactly agree with ledger policy;
+a mismatch keeps reports pending and retries after configuration is corrected.
 
 ## Stage 5 implementation (2026-09-22)
 
@@ -10,7 +28,7 @@ signers, a SQLite operation journal and protected originals. A valid-event consu
 builds an explicit public projection with checkpoint/transaction deduplication.
 See [backend API and configuration](../backend/README.md) and
 [executed acceptance](STAGE5_REPORT.md). The earlier Stage 4 status above is
-historical; anomaly/review logic and UI remain Stage 6.
+historical; Stage 6 now implements anomaly/review logic and UI.
 
 The concrete HTTP contract receives an opaque operation ID from the client and
 requires the matching Idempotency-Key, then journals it before submission. It never
@@ -104,7 +122,7 @@ Kafka, if ever needed, would ingest application events after commit. It is not t
 
 ## Application API surface
 
-Routes are under `/api/v1`. Stage 5 implements lifecycle, document, operation-status and public-lot endpoints; anomaly/review routes remain planned for Stage 6. Mutations require authenticated actor role and `Idempotency-Key` equal to `operationId`. Exact implemented request/response examples are in the backend guide.
+Routes are under `/api/v1`. Stages 5–6 implement lifecycle, document, operation-status, public-lot, anomaly and review endpoints. Mutations require authenticated actor role and `Idempotency-Key` equal to `operationId`. Exact implemented request/response examples are in the backend and UI guides.
 
 | Route | Responsibility |
 | --- | --- |
