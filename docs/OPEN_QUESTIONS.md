@@ -1,12 +1,22 @@
 # AgroChain — evidence, assumptions and open questions
 
+## Stage 6 update (2026-09-23)
+
+The anomaly/review/UI obligations are implemented and verified; see
+[Stage 6 report](STAGE6_REPORT.md). The UI uses same-origin browser primitives,
+with no additional frontend framework. The rule remains gross unit-price change,
+not net margin or legal assessment. Immutable policy and configurable backend
+agreement are enforced. Final venue/network constraints, measurement methodology,
+competition slides and fallback material remain Stage 7/8 work. Historical notes
+below are not the current implementation status.
+
 ## Stage 5 update (2026-09-22)
 
 The Spring Boot/API, authenticated per-MSP Gateway, four simulated signed sources,
 controlled originals, commit recovery and public projection obligations are now
 implemented and tested; see [Stage 5 report](STAGE5_REPORT.md). Remaining production
 key lifecycle, remote TLS/login and capacity work are not pilot claims. Stage 6
-anomaly/review/UI is the next unimplemented stage. The entries below are historical.
+anomaly/review/UI was the next stage at that date. The entries below are historical.
 
 ## Stage 4 update (2026-09-21)
 
