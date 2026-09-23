@@ -66,6 +66,15 @@ func (e engine) apply(c Command, x execution) (Receipt, error) {
 		return receipt, err
 	}
 	switch c.Command {
+	case "EvaluatePrice", "OpenReview", "ResolveReview":
+		var p analysisInput
+		_ = json.Unmarshal(c.Payload, &p)
+		ids = append(ids, p.AnomalyID)
+		eventName = "ReviewUpdated"
+		if c.Command == "EvaluatePrice" {
+			eventName = "PriceEvaluated"
+			ids = append(ids, p.ReportID)
+		}
 	case "CreateBatch":
 		var p createInput
 		_ = json.Unmarshal(c.Payload, &p)
