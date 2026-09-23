@@ -27,7 +27,7 @@ public class Application {
         private volatile boolean stopped;
         Workers(Ledger l,Store s,Workflow w,Projection p){ledger=l;store=s;workflow=w;projection=p;}
         @EventListener(ApplicationReadyEvent.class) public void start(){
-            recovery.scheduleWithFixedDelay(()->{try{workflow.recover();}catch(Exception e){org.slf4j.LoggerFactory.getLogger(Workers.class).warn("Operation recovery will retry");}},2,2,TimeUnit.SECONDS);
+            recovery.scheduleWithFixedDelay(()->{try{workflow.recover();Analysis.reconcile(store,ledger,workflow);}catch(Exception e){org.slf4j.LoggerFactory.getLogger(Workers.class).warn("Operation recovery will retry");}},2,2,TimeUnit.SECONDS);
             Thread.ofVirtual().name("agrochain-public-projection").start(()->{
                 while(!stopped){
                     try{ledger.events(store.checkpoint(),projection::accept);}
