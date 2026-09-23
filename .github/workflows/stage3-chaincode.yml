@@ -1,4 +1,4 @@
-name: Stage 5 backend and Fabric acceptance
+name: Stage 6 anomaly, backend and Fabric acceptance
 on:
   pull_request:
     paths: ['backend/**', 'chaincode/**', 'network/**', 'Makefile', '.github/workflows/stage3-chaincode.yml']
@@ -39,8 +39,8 @@ jobs:
         run: make stage4-check
       - name: Prepare pinned Java tools and development API credentials
         run: make backend-prerequisites backend-prepare
-      - name: HTTP, institutional simulators, Gateway recovery and public projection gate
-        run: make stage5-check
+      - name: HTTP, anomaly, private review, Gateway recovery and public projection gate
+        run: make stage6-check
       - name: Verify repeat deployment preserves the release
         run: make chaincode-deploy chaincode-check
       - name: Stop and remove only generated demo artifacts
