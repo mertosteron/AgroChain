@@ -24,9 +24,11 @@ public final class AuthFilter extends OncePerRequestFilter {
     }
     protected void doFilterInternal(HttpServletRequest req,HttpServletResponse res,FilterChain chain) throws IOException,ServletException {
         res.setHeader("Cache-Control","no-store");res.setHeader("X-Content-Type-Options","nosniff");
+        res.setHeader("Content-Security-Policy","default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'");
+        res.setHeader("Referrer-Policy","no-referrer");
         res.setHeader("X-Source-Mode","SIMULATED");res.setHeader("X-Blockchain-Mode","FABRIC");
         String path=req.getRequestURI();
-        boolean publicRead=req.getMethod().equals("GET") && (path.equals("/api/v1/health") || path.startsWith("/api/v1/public/lots/"));
+        boolean publicRead=req.getMethod().equals("GET") && (Set.of("/","/index.html","/app.js","/style.css","/consumer.html","/consumer.js").contains(path) || path.equals("/api/v1/health") || path.startsWith("/api/v1/public/lots/"));
         if(!publicRead){
             String authorization=req.getHeader("Authorization");Actor actor=null;
             if(authorization!=null && authorization.startsWith("Bearer ") && authorization.length()==71){
