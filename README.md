@@ -1,5 +1,29 @@
 # AgroChain
 
+## Yarışma paketini açın
+
+[Aşama 8 teslim paketi](docs/competition/README.md): kurulum rehberi, sabit iki
+demo senaryosu, mimari, 12 slaytlık PPTX, üç dakikalık akış ve bağımsız çevrimdışı
+HTML. [Kabul raporu](docs/STAGE8_REPORT.md) temiz kurulum provasını ve sınırlarını
+belgeler. Kurum verileri **SIMULATED**, yerel blockchain işlemleri gerçektir.
+
+Desteklenen Linux ortamında Fabric araçları hazırlandıktan sonra yeni kurulum:
+
+```bash
+make demo-setup
+make backend-run
+# İkinci terminalde:
+make demo-seed demo-check
+```
+
+Mevcut ağ için önce `make network-up chaincode-check demo-ready` kullanın.
+Arayüz `http://localhost:8080`; normal parti `BAT-DEMONORMAL01`, şüpheli parti
+`BAT-DEMOSUSPICIOUS01`. Ayrıntılar ve kimlik bilgileri
+[kurulum rehberinde](docs/competition/INSTALLATION.md).
+`make competition-package` kaynak ve sunumları `dist/AgroChain-competition.tar.gz`
+içine, checksum ve dosya manifestiyle paketler; yerel anahtarlar, tokenlar ve
+ledger diskleri dahil edilmez. İlk bağımlılık kurulumu internet gerektirir.
+
 TEKNOFEST agricultural traceability pilot using Hyperledger Fabric. Stage 1 contracts
 live in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) and its companion documents.
 Stage 2 provisions four organization peers, three Raft orderers and TLS-enabled
@@ -11,6 +35,16 @@ simulators, durable operation recovery and a consumer-safe public read model.
 Stage 6 adds deterministic price analysis attested by chaincode, private review
 actions, Turkish actor/inspector screens and a consumer lot QR page. Institutional
 data remains simulated; no real government integration is claimed.
+
+Stage 7 provides `make stage7-check`: one sequential test gate covering real PDC
+access, backend/browser workflows, pilot latency measurements and two fresh
+network reproductions with the existing ledger preserved. See the
+[testing guide](docs/STAGE7_TESTING.md) for prerequisites, temporary network
+interruption, measurement boundaries and evidence locations.
+The [Stage 7 completion report](docs/STAGE7_REPORT.md) records passing component
+tests, two successful clean reproductions and the installation defects fixed
+during validation. Stage 8 adds the competition package linked above without
+changing the domain or deploying the pilot publicly.
 
 Stage 6 operation and acceptance commands are in [the UI guide](docs/STAGE6_UI.md).
 Start `make backend-run` and open `http://localhost:8080`. Existing 0.2.1 networks
