@@ -11,6 +11,11 @@ public final class EvidenceService {
     public EvidenceService(Ledger ledger,Store store,InstitutionalAdapter adapter){this.ledger=ledger;this.store=store;this.adapter=adapter;}
     public ObjectNode prepare(Actor actor,JsonNode request) {
         JsonNode command=request.get("command");String fn=Json.text(command,"command");
+        if(fn.equals("EvaluatePrice"))return Analysis.proposal(ledger,actor,Json.text(command,"batchId"));
+        if(fn.equals("OpenReview") || fn.equals("ResolveReview")){
+            ObjectNode action=request.get("privateInput").deepCopy();action.put("recordSaltHex",Crypto.salt());
+            return Json.obj("reviewActionInput",action,"reviewStateSaltHex",Crypto.salt());
+        }
         JsonNode batch=fn.equals("CreateBatch")?command.get("payload"):ledger.query(actor,"GetBatch",Json.text(command,"batchId"));
         JsonNode trust=ledger.query(actor,"GetConfiguration");
         List<String[]> needs=switch(fn){
