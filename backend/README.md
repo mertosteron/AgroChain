@@ -193,7 +193,9 @@ interactive login/rotation flow; HTTP is loopback-only, not a remote deployment.
 The Retailer Gateway is a single availability dependency. Event-loop retries retain
 their checkpoint; no distributed queue or high availability is claimed. Retained
 failed/pending staged files need an operator-reviewed cleanup policy before larger
-deployments. Anomaly/review endpoints and UI remain Stage 6.
+deployments. Stage 6 anomaly/review endpoints and UI are documented in
+[the UI guide](../docs/STAGE6_UI.md). The UI's manual token entry is not an identity
+provider or production authentication service.
 
 Dependency choices follow [Spring Boot 3.5 requirements](https://docs.spring.io/spring-boot/3.5/system-requirements.html)
 and the [Fabric Gateway evaluate/endorse/submit/commit model](https://hyperledger-fabric.readthedocs.io/en/latest/gateway.html).
