@@ -1,6 +1,7 @@
 import base64
 import importlib.util
 import json
+import os
 import socket
 from pathlib import Path
 import string
@@ -16,6 +17,25 @@ spec.loader.exec_module(network)
 
 
 class SafetyTests(unittest.TestCase):
+    def test_isolated_volume_prefix_is_strict(self):
+        for value in ("", "other", "agrochain-stage7-../", "agrochain-stage7-123"):
+            with patch.dict(os.environ, AGROCHAIN_LEDGER_VOLUME_PREFIX=value):
+                with self.assertRaises(ValueError):
+                    network.ledger_prefix()
+        with patch.dict(os.environ, AGROCHAIN_LEDGER_VOLUME_PREFIX="agrochain-stage7-012345abcdef"):
+            self.assertEqual(network.ledger_prefix(), "agrochain-stage7-012345abcdef")
+
+    def test_cleanup_rejects_identity_volume_mismatch_before_docker(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            manifest = root / network.GENERATED[3]
+            manifest.parent.mkdir(parents=True)
+            manifest.write_text(json.dumps({"ledgerVolumePrefix": "agrochain-stage7-012345abcdef"}))
+            with patch.object(network, "ROOT", root), patch.object(network, "run") as docker:
+                with self.assertRaisesRegex(ValueError, "prefix differs"):
+                    network.cleanup_preflight()
+                docker.assert_not_called()
+
     def test_port_probe_rejects_live_listener(self):
         with socket.socket() as listener:
             listener.bind(("127.0.0.1", 0))
@@ -83,6 +103,18 @@ class SafetyTests(unittest.TestCase):
             self.assertFalse((root / "runtime").exists())
             for name in ("organizations/.gitkeep", "organizations/user-notes", "config/configtx.yaml", "tools/bin/peer"):
                 self.assertTrue((root / name).is_file())
+
+    def test_cleanup_removes_readonly_generated_go_cache(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            cache = root / "runtime/go-mod/example@v1"
+            cache.mkdir(parents=True)
+            (cache / "go.mod").write_text("module example")
+            cache.chmod(0o555)
+            targets = network.safe_targets(root)
+            with patch.object(network, "cleanup_preflight"), patch.object(network, "inspect_optional", return_value=None), patch.object(network, "safe_targets", return_value=targets):
+                network.clean_generated()
+            self.assertFalse((root / "runtime").exists())
 
     def test_cleanup_rejects_foreign_volume(self):
         def inspect(kind, name):
