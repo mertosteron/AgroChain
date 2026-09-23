@@ -209,16 +209,16 @@ networks:
 
 volumes:
   orderer1-data:
-    name: agrochain-orderer1-data
+    name: ${AGROCHAIN_LEDGER_VOLUME_PREFIX:-agrochain}-orderer1-data
   orderer2-data:
-    name: agrochain-orderer2-data
+    name: ${AGROCHAIN_LEDGER_VOLUME_PREFIX:-agrochain}-orderer2-data
   orderer3-data:
-    name: agrochain-orderer3-data
+    name: ${AGROCHAIN_LEDGER_VOLUME_PREFIX:-agrochain}-orderer3-data
   producer-data:
-    name: agrochain-producer-data
+    name: ${AGROCHAIN_LEDGER_VOLUME_PREFIX:-agrochain}-producer-data
   logistics-data:
-    name: agrochain-logistics-data
+    name: ${AGROCHAIN_LEDGER_VOLUME_PREFIX:-agrochain}-logistics-data
   retailer-data:
-    name: agrochain-retailer-data
+    name: ${AGROCHAIN_LEDGER_VOLUME_PREFIX:-agrochain}-retailer-data
   regulator-data:
-    name: agrochain-regulator-data
+    name: ${AGROCHAIN_LEDGER_VOLUME_PREFIX:-agrochain}-regulator-data
