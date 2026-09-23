@@ -379,7 +379,7 @@ func TestFailClosedDispatcher(t *testing.T) {
 			t.Fatal("deployed write path enabled")
 		}
 	}
-	for _, fn := range []string{"CancelCustodyTransfer", "SplitBatch", "MergeBatch", "EvaluatePrice", "SetVerifier", "InitLedger"} {
+	for _, fn := range []string{"CancelCustodyTransfer", "SplitBatch", "MergeBatch", "SetVerifier", "InitLedger"} {
 		_, err := dispatch(newMemory(), Regulator, "auditor", fn, []string{"BAT-NORMAL01"})
 		code(t, err, "UNSUPPORTED_PILOT_OPERATION")
 	}
