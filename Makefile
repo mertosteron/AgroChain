@@ -79,3 +79,28 @@ stage6-integration:
 stage6-check: backend-build chaincode-test chaincode-check stage6-integration backend-gateway-test
 stage6-ui-test:
 	node "$(ROOT)backend/test/ui_test.cjs"
+
+.PHONY: demo-setup demo-ready demo-seed demo-check stage8-unit stage8-rehearse stage8-offline-test
+demo-setup:
+	bash "$(ROOT)scripts/demo-setup.sh"
+demo-ready:
+	bash "$(ROOT)scripts/demo-ready.sh"
+demo-seed:
+	python3 "$(ROOT)scripts/demo.py" seed
+demo-check:
+	python3 "$(ROOT)scripts/demo.py" check
+stage8-unit:
+	python3 -m unittest discover -s "$(ROOT)scripts" -p 'test_*.py' -v
+stage8-rehearse:
+	python3 "$(ROOT)scripts/rehearse-demo.py"
+stage8-offline-test:
+	node "$(ROOT)scripts/test-offline.cjs"
+.PHONY: competition-package
+competition-package:
+	python3 "$(ROOT)scripts/package-demo.py"
+
+.PHONY: stage7-unit stage7-check stage7-measure stage7-reproduce
+stage7-unit:
+	python3 -m unittest discover -s "$(ROOT)backend/test" -p 'test_stage7.py' -v
+stage7-check stage7-measure stage7-reproduce:
+	python3 "$(ROOT)backend/test/stage7_run.py" $(patsubst stage7-%,%,$@)
