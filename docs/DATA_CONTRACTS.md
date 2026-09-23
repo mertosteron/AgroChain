@@ -12,8 +12,14 @@ IDEMPOTENCY_CONFLICT is an additional 409 code for changed input under an existi
 actor/operation key. All HTTP responses identify SIMULATED sources and actual
 FABRIC operations in headers. Shared chaincode/PDC schemas remain unchanged.
 Document bytes are now verified and access-controlled through the backend;
-the public lot allowlist is populated only from valid events. Anomaly and review
-records/endpoints remain Stage 6 work.
+the public lot allowlist is populated only from valid events. Stage 6 implements
+the anomaly and review schemas below, plus GetAnomaly/GetReviewHistory (batch ID
+argument, retailer/regulator private roles only). An unevaluated batch returns
+`{status:"EVALUATION_PENDING",batchId}`; missing evidence never produces NO_SIGNAL.
+Review history is an array of immutable actions; action type defines its order
+(OPEN_REVIEW before RESOLVE_REVIEW), not the opaque operation ID ordering.
+Review explanations alone allow printable Unicode up to 2,000 code points.
+All signed source fields retain the restricted ASCII/integer canonical profile.
 
 ## Stage 3 versioned query and implementation addendum
 
