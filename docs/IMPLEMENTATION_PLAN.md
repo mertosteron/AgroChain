@@ -1,6 +1,6 @@
 # AgroChain — staged implementation plan
 
-Status: Stage 5 implemented and locally verified; see [Stage 5 report](STAGE5_REPORT.md). The historical Stage 3/4 dependency discussion below is retained; those gates are closed. Stage 6 is next and has not been implemented. One stage at a time.
+Status: Stage 6 implementation and verification are documented in [Stage 6 report](STAGE6_REPORT.md). Earlier dependency discussions are historical. Stage 7 measurement and final Stage 8 packaging remain deferred. One stage at a time.
 
 ## Stage 1 gate
 
