@@ -4,6 +4,7 @@ import base64
 import hashlib
 import json
 import os
+import re
 from pathlib import Path
 import shutil
 import socket
@@ -15,7 +16,14 @@ import sys
 ROOT = Path(__file__).resolve().parents[1]
 ORGS = ("producer", "logistics", "retailer", "regulator")
 SERVICES = ("orderer1", "orderer2", "orderer3", *ORGS)
-VOLUMES = tuple(f"agrochain-{s}-data" for s in SERVICES)
+def ledger_prefix():
+    value = os.environ.get("AGROCHAIN_LEDGER_VOLUME_PREFIX", "agrochain")
+    if not re.fullmatch(r"agrochain(?:-stage7-[0-9a-f]{12})?", value):
+        raise ValueError("Invalid isolated ledger volume prefix")
+    return value
+
+
+VOLUMES = tuple(f"{ledger_prefix()}-{s}-data" for s in SERVICES)
 GENERATED = (
     "organizations/peerOrganizations", "organizations/ordererOrganizations",
     "channel-artifacts/agrochannel.block", "channel-artifacts/generated-manifest.json",
@@ -69,7 +77,7 @@ def generated_files(root=ROOT):
 
 
 def record_generated():
-    data = {"sourceSha256": source_digest(), "files": generated_files()}
+    data = {"sourceSha256": source_digest(), "files": generated_files(), "ledgerVolumePrefix": ledger_prefix()}
     (ROOT / GENERATED[3]).write_text(json.dumps(data, indent=2) + "\n")
 
 
@@ -78,6 +86,7 @@ def validate_generated():
     manifest = ROOT / GENERATED[3]
     require(manifest.is_file(), "Run make generate first (or clean-generated after interrupted generation)")
     data = json.loads(manifest.read_text())
+    require(data.get("ledgerVolumePrefix", "agrochain") == ledger_prefix(), "Ledger volume prefix differs from generated identities")
     require(data["sourceSha256"] == source_digest(), "Generation inputs changed; explicit stop/clean/bootstrap required")
     require(data["files"] == generated_files(), "Generated artifacts changed or missing; restore or explicitly stop/clean/bootstrap")
     require((ROOT / GENERATED[2]).stat().st_size > 0, "Missing channel genesis block")
@@ -252,6 +261,9 @@ def verify_config(data, root=ROOT):
 
 def cleanup_preflight():
     safe_targets()
+    manifest = ROOT / GENERATED[3]
+    if manifest.exists():
+        require(json.loads(manifest.read_text()).get("ledgerVolumePrefix", "agrochain") == ledger_prefix(), "Ledger volume prefix differs from generated identities")
     require(not run("docker", "ps", "-aq", "--filter", "label=com.docker.compose.project=agrochain"), "Run make network-down before clean-generated")
     for service in SERVICES:
         require(inspect_optional("container", f"agrochain-{service}") is None, "Named container still exists; cleanup refused")
@@ -269,6 +281,11 @@ def clean_generated():
             subprocess.run(["docker", "volume", "rm", name], check=True)
     for path in safe_targets():
         if path.is_dir():
+            # Go module caches contain owner-read-only directories. These are
+            # already validated generated targets; allow unlinking their children.
+            for directory in (path, *path.rglob("*")):
+                if directory.is_dir():
+                    directory.chmod(directory.stat().st_mode | 0o700)
             shutil.rmtree(path)
         elif path.exists():
             path.unlink()
