@@ -1,5 +1,19 @@
 # AgroChain — security and privacy contract
 
+## Actual Stage 6 enforcement (2026-09-23)
+
+EvaluatePrice requires Regulator/oracle; OpenReview and ResolveReview require
+Regulator/reviewer in both backend and chaincode. Retailer and private Regulator
+roles may read analysis/reviews; Producer, Logistics and public-reader cannot.
+The chaincode recomputes the proposed score from committed private inputs and
+ledger policy. Private result/review records carry fresh independent salts;
+shared references/events carry neither prices, classification nor explanations.
+The consumer projection remains an explicit allowlist even after review events.
+Same-origin static pages use a restrictive CSP, textContent for data rendering,
+no browser credential storage, no inline scripts and no external assets or QR
+service. These controls support the local pilot; they do not create production
+SSO, encryption at rest or protection from PDC member administrators.
+
 ## Actual Stage 5 backend enforcement (2026-09-22)
 
 Random development bearer tokens select fixed per-MSP/role signers; request headers
