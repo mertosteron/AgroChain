@@ -4,6 +4,7 @@ TEKNOFEST teknik jürisine yönelik yerel pilot teslimi. Gerçek yerel Fabric
 işlemleri ile **SIMULATED** kurum verileri açıkça ayrılır. Bu paket portal
 başvurusu veya yarışma şartnamesine resmi uygunluk onayı değildir.
 
+- [Sade proje tanıtımı](PROJECT_INTRO.md)
 - [Kurulum ve tekrar başlatma](INSTALLATION.md)
 - [Üç dakikalık canlı gösterim](DEMO_3MIN.md)
 - [Kısa teknik açıklama ve mimari](TECHNICAL.md)

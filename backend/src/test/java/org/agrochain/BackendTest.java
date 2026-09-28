@@ -91,6 +91,13 @@ class BackendTest {
         MockHttpServletResponse response=new MockHttpServletResponse();filter.doFilter(req,response,new MockFilterChain());assertEquals(401,response.getStatus());
         req=new MockHttpServletRequest("POST","/api/v1/batches");req.addHeader("Authorization","Bearer "+tokens.path("producer:producer").asText());req.addHeader("X-Role","admin");response=new MockHttpServletResponse();filter.doFilter(req,response,new MockFilterChain());assertEquals(producer,req.getAttribute("actor"));
     }
+    @Test void idGrammarMatchesTheDocumentedAndChaincodeEnforcedThirtyTwoCharacterBound() {
+        // docs/DATA_CONTRACTS.md and chaincode/.../validation.go both cap the suffix at 32 chars.
+        assertEquals("BAT-"+"A".repeat(32),Json.id("BAT-"+"A".repeat(32),"BAT"));
+        code("INVALID_IDENTIFIER",()->Json.id("BAT-"+"A".repeat(33),"BAT"));
+        assertEquals("BAT-"+"A".repeat(8),Json.id("BAT-"+"A".repeat(8),"BAT"));
+        code("INVALID_IDENTIFIER",()->Json.id("BAT-"+"A".repeat(7),"BAT"));
+    }
     class FakeLedger implements Ledger {
         Map<String,JsonNode> receipts=new HashMap<>();int endorsements,submissions;boolean loseResponse,dropBeforeCommit,offline,invalid,invalidAfterLostResponse;
         public JsonNode query(Actor actor,String fn,String... args){

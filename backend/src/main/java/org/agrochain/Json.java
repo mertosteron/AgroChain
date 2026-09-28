@@ -60,6 +60,6 @@ public final class Json {
         if (n==null || !n.has(key) || !n.get(key).isIntegralNumber() || !n.get(key).canConvertToLong()) throw ApiError.of("INVALID_SCHEMA"); return n.get(key).longValue();
     }
     public static String id(String value, String prefix) {
-        if (value==null || !value.matches(prefix+"-[A-Z0-9]{8,40}")) throw ApiError.of("INVALID_IDENTIFIER"); return value;
+        if (value==null || !value.matches(prefix+"-[A-Z0-9]{8,32}")) throw ApiError.of("INVALID_IDENTIFIER"); return value;
     }
 }
